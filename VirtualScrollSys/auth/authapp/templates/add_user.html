@@ -1,0 +1,75 @@
+{% include 'top.html' %}
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <title>Manage Users</title>
+</head>
+<body>
+    <div class="page-container">             
+        <!-- Page Section -->
+        <div style="padding-left: 25px; margin-right: 25px;">
+            <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
+                <h4>Hello, Whiskers <strong style="color: #C085FB; text-transform: capitalize">{{ user.username }}</strong>!</h4>
+                <p class="mb-0">You are about to bestow the gift of knowledge upon a <span style="color: #C085FB;">new Scholar</span>! The realm of Edstemus grows ever stronger as you grant access to the Library of Agility.</p>
+                <p class="mb-0">Choose wisely, for the future of the scrolls lies in the hands of those you trust.</p>
+                <p>May this new member contribute to the endless pursuit of wisdom and uphold the honor of the Whiskers!</p>
+            </div>
+
+        <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">Add a New User</h3>
+
+        <div class="container" style="margin-left: 0px; color: #EFF0F2;">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-row">         
+                    <div class="form-group col-md-6">
+                        <label for="fullName">Full Name:</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName" maxlength="255" required style="background-color: #262626; color: #EFF0F2">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" maxlength="150" autofocus required style="background-color: #262626; color: #EFF0F2">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" maxlength="254" required style="background-color: #262626; color: #EFF0F2">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="phoneNumber">Phone Number:</label>
+                        <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required style="background-color: #262626; color: #EFF0F2">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="idKey" class="mb-1">ID Key :</label>
+                        <input type="text" class="form-control" id="idKey" name="idKey" maxlength="100" required style="background-color: #262626; color: #EFF0F2">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="role" class="mb-1">Role :</label>
+                        <select class="form-control" id="role" name="role" required style="background-color: #262626; color: #EFF0F2">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="password" class="mb-1">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required style="background-color: #262626; color: #EFF0F2">
+                    </div>
+                </div>
+                <button type="submit" name="submit" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-save" style="font-size:16px;"></i>  Save </button>
+            </form>
+            <br/>
+        </div>
+        </div> 
+    </div>
+</body>

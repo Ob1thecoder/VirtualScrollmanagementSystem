@@ -1,0 +1,71 @@
+{% include 'top.html' %}
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <title>Edit Profile</title>
+</head>
+<body>
+    <div class="page-container">             
+        <!-- Page Section -->
+        <div style="padding-left: 25px; margin-right: 25px;">
+            <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
+                <h4>Greetings, <strong style="color: #C085FB; text-transform: capitalize">{{ user.username }}</strong>!</h4>
+                <p class="mb-0">You're about to sprinkle some magic on your profile! ✨ The Library of Agility can't wait to see your <span style="color: #C085FB;"> updated info</span>.</p>
+                <p class="mb-0">Each change you make adds a new chapter to your story, enhancing the realm of Edstemus!</p>
+                <p>Proceed with excitement — your new profile is just a click away!</p>
+            </div>
+
+        <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">Edit Your Profile Info</h3>
+
+        <div class="container" style="margin-left: 0px; color: #EFF0F2;">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+                {% csrf_token %}
+                <!-- {{ form.as_p }} -->
+                <div class="form-group mb-3">
+                    <label for="fullName">Full Name:</label>
+                    <input type="text" class="form-control {% if form.fullName.errors %}is-invalid{% endif %}" id="fullName" name="fullName" value="{{ form.fullName.value }}" maxlength="255" required style="background-color: #262626; color: #EFF0F2">
+                    <!-- Display errors -->
+                    {% for error in form.fullName.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="idKey" class="mb-1">ID Key :</label>
+                    <input type="text" class="form-control {% if form.idKey.errors %}is-invalid{% endif %}" id="idKey" name="idKey" value="{{ form.idKey.value }}" maxlength="100" required style="background-color: #262626; color: #EFF0F2">
+                    <!-- Display errors -->
+                    {% for error in form.idKey.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="text" class="form-control {% if form.phoneNumber.errors %}is-invalid{% endif %}" id="phoneNumber" name="phoneNumber" value="{{ form.phoneNumber.value }}" maxlength="20" required style="background-color: #262626; color: #EFF0F2">
+                    <!-- Display errors -->
+                    {% for error in form.phoneNumber.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="profile_picture" class="mb-1">Profile Picture:</label>
+                    <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*" style="background-color: #262626; color: #EFF0F2">
+                    <!-- Display errors -->
+                    {% for error in form.profile_picture.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <button type="submit" name="submit" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-save" style="font-size:16px;"></i>  Save </button>
+            </form>
+            <br/>
+        </div>
+        </div> 
+    </div>
+</body>

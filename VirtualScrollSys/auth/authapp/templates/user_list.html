@@ -1,0 +1,104 @@
+{% include 'top.html' %}
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <title>Manage Users</title>
+</head>
+<body>
+    <div class="page-container">             
+        <!-- Page Section -->
+        <div style="padding-left: 25px; margin-right: 25px;">
+            <!-- User Table -->
+            <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">List of Users</h3>
+            {% if users %}
+            <table class="table table-hover table-bordered border-secondary" style="color: #EFF0F2;">
+                <thead>
+                    <tr style="background-color: #131313; text-align: center;">
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>ID Key</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        {% if user.idKey != 'guest' %}
+                        <td>{{ user.fullName }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phoneNumber }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.idKey }}</td>
+                        <td>
+                            {% if user.banned %}
+                                <span style="color: red;">Banned</span>
+                            {% else %}
+                                <span style="color: green;">Active</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_user' user.username %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-trash" style="font-size:16px;"></i>  Delete</button>
+                            </form>
+                            {% if user.role != 'admin' %}
+                                {% if user.banned %}
+                                    <a href="{% url 'unban_user' user.username %}">
+                                        <button class="btn btn-success"  style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-circle-o" style="font-size:16px;"></i>  Unban</button>
+
+                                    </a>
+                                    
+                                {% else %}
+                                    <a href="{% url 'ban_user' user.username %}">
+                                        <button class="btn btn-warning" style="margin-right: 10px; margin-bottom: 8px; padding-right: 30px;"><i class="fa fa-ban" style="font-size:16px;"></i>
+                                            Ban</button>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <style>
+                /* Custom striped rows */                
+                tbody tr:nth-child(odd) {
+                    background-color: #131313;
+                }
+                tbody tr:nth-child(even) {
+                    background-color: #222024;
+                }
+
+                /* Hover effect for table rows */
+                tbody tr:hover {
+                    background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);
+                }
+
+                tbody tr:hover td {
+                    color: #EFF0F2;
+                }
+            </style>
+            
+            {% else %}
+            <p>No users found.</p>
+            {% endif %}
+        </div> 
+    </div>
+</body>
