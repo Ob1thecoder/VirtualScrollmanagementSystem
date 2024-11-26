@@ -1,13 +1,27 @@
 # Virtual Scroll System
-<!-- ngrok http --domain=sought-fully-fawn.ngrok-free.app 8080  for jenkins -->
 <h2></h2>
+<h3>WebApp overview</h3>
+Virtual Scroll Management System is a library to store Scroll in form of the digital text file. It allow users to 
+access their accounts using their own identification signature with username and password to be able to upload their own
+Scrolls and to view/download others' Scrolls.
 
-For our program it might require you to install several tools
-make tools and django part. You may check with the following links:
+
+This project is for a free-style assignment for learning purposes which requires to have Java for backend implementations
+
+Implement a REST Api using Springboot to deal with data manipulations and Django framework to extract data and deal with Human Computer Interface.
+
+The ```springboot.pid``` file to track local machine process which run the Java backend 
+
+The ```django.pid``` file to track local machine process which run the Python HCI.
 
 
+The database for this small scale project is db.sqlite3
 
- * make tools 
+<h3>Technology requirement</h3>
+
+* Springboot : https://docs.spring.io/spring-boot/installing.html
+
+ * make tools :
 
    ** (for Linux)
 ```sudo apt-get -y install make```
@@ -18,6 +32,6 @@ make tools and django part. You may check with the following links:
 Install require python packages with <code>pip install requirement.txt</code>
 
 
-To run our code, while at the root github directory use ```make run-all``` 
+To test run the codebase, while at the root github directory use ```make run-all``` 
 
 To stop the program, go to the terminal,  ```make clean```
