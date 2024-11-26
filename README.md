@@ -6,7 +6,7 @@ access their accounts using their own identification signature with username and
 Scrolls and to view/download others' Scrolls.
 
 
-This project is for a free-style assignment for learning purposes which requires to have Java for backend implementations
+This a free-style project is for learning purposes which requires to have Java for backend implementations
 
 Implement a REST Api using Springboot to deal with data manipulations and Django framework to extract data and deal with Human Computer Interface.
 
