@@ -2,7 +2,15 @@ package com.VSS.controller;
 
 
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -51,20 +59,26 @@ public class ScrollController {
 
     // POST endpoint to upload a new scroll
     @PostMapping("/upload")
-    public ResponseEntity<Scroll> uploadScroll(
-            @RequestParam("title") String title,
-            @RequestParam("owner") String owner,
-            @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadScroll(
+        @RequestParam("title") String title,
+        @RequestParam("owner") String owner,
+        @RequestParam("file") MultipartFile file) {
         try {
             byte[] fileData = file.getBytes();
-            Scroll scroll = scrollService.uploadScroll(title, owner, fileData);
+            String mimeType = file.getContentType();
 
+            if (mimeType == null || !(mimeType.startsWith("text") || mimeType.startsWith("image") || mimeType.equals("application/pdf"))) {
+                return new ResponseEntity<>("Unsupported file type. Only text, images, and PDFs are allowed.",
+                HttpStatus.BAD_REQUEST);
+            }
+
+            Scroll scroll = scrollService.uploadScroll(title, owner, fileData);
             scrollService.incrementUploadCount(scroll.getId());
             return new ResponseEntity<>(scroll, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error uploading file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+}
 
     @GetMapping("/search")
     public ResponseEntity<List<Scroll>> searchScrolls(
@@ -79,15 +93,41 @@ public class ScrollController {
 
     // GET endpoint for previewing a scroll file (text or binary preview)
     @GetMapping("/preview/{id}")
-    public ResponseEntity<String> previewScroll(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> previewScroll(@PathVariable Long id) {
         Scroll scroll = scrollService.getScrollById(id);
         if (scroll == null) {
-            return new ResponseEntity<>("Scroll not found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Scroll not found"));
         }
 
-        String filePreview = new String(scroll.getFile());  
-        return new ResponseEntity<>(filePreview, HttpStatus.OK);
+        String mimeType;
+        String base64Content;
+        try {
+            mimeType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(scroll.getFile()));
+            if (mimeType == null) mimeType = "application/octet-stream";
+
+            base64Content = Base64.getEncoder().encodeToString(scroll.getFile());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to process file"));
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "mime_type", mimeType,
+            "scroll_content", base64Content
+        ));
     }
+
+    //Check file types
+    private String detectMimeType(String fileName, byte[] fileData) {
+        try {
+            return Files.probeContentType(Path.of(fileName));
+        } catch (IOException e) {
+            try (InputStream inputStream = new ByteArrayInputStream(fileData)) {
+                return URLConnection.guessContentTypeFromStream(inputStream);
+            } catch (IOException ex) {
+                return "application/octet-stream";
+            }
+    }
+}
 
     @GetMapping("/list/{username}")
     public ResponseEntity<List<Scroll>> listScrollsByUser(@PathVariable String username) {
@@ -135,25 +175,29 @@ public class ScrollController {
     // GET endpoint for downloading a scroll by its ID
     @GetMapping("/download/{id}")
     public ResponseEntity<ByteArrayResource> downloadScroll(@PathVariable Long id) {
-        Scroll scroll = scrollService.downloadScroll(id);
+        // Retrieve the scroll by ID
+        Scroll scroll = scrollService.getScrollById(id);
         if (scroll == null) {
+            // If no scroll is found, return a 404 response
             return ResponseEntity.notFound().build();
         }
-
-        // scrollService.incrementDownloadCount(id);
-
-        
-
+    
+        // Increment download count for tracking purposes
+        scrollService.incrementDownloadCount(id);
+    
+        // Set appropriate headers for file download
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + scroll.getTitle() + ".txt\"");
-
+        String fileName = scroll.getTitle() + ".txt";  
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+    
+        // Return the file as a downloadable resource
         return ResponseEntity.ok()
                 .headers(headers)
-                .contentLength(scroll.getFile().length)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(scroll.getFile().length)  
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)  
                 .body(new ByteArrayResource(scroll.getFile()));
     }
-
+    
 
     
 }

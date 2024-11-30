@@ -1,0 +1,7 @@
+Django>=3.2
+psycopg2-binary
+Pillow
+requests
+argon2-cffi
+djangorestframework
+dj-database-url

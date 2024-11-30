@@ -27,15 +27,17 @@ dependencies {
 
     // Spring Boot JDBC for database access
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // SQLite JDBC driver for connecting to SQLite database
     implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
-
-    // Lombok for reducing boilerplate code (optional)
+    //Changed Database driver to Postgresql
+    implementation 'org.postgresql:postgresql:42.6.0'
+    
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Jackson (for JSON serialization/deserialization)
+    
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
     // Testing dependencies
@@ -44,7 +46,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.5.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
 
-    // Needed to run tests (JUnit Platform)
+    // Needed to run tests 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 

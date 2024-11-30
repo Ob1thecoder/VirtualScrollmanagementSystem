@@ -12,7 +12,8 @@ public class Scroll {
     private String owner;
     private String uploadedAt;
     private int uploadCount;  
-    private int downloadCount;  
+    private int downloadCount;
+    private String fileType;  
     
     public Scroll() {}
 
@@ -35,6 +36,7 @@ public class Scroll {
     public void setOwner(String owner) { this.owner = owner; }
     public String getUploadedAt() { return uploadedAt; }
     public void setUploadedAt(String uploadedAt) { this.uploadedAt = uploadedAt; }
+    public String getfileType(){return this.fileType;}
     public static byte[] fileToBytes(File file) throws IOException {
         return Files.readAllBytes(file.toPath());
     }

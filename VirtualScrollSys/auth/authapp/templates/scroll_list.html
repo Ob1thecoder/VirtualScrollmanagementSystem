@@ -86,8 +86,9 @@
                             </form> 
                             {% if request.user.idKey != 'guest' %}  
                             <form method="GET" action="{% url 'download_scroll' scroll.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-download" style="font-size:16px;"></i>  Download</button>
+                                <button type="submit" class="btn btn-success" style="margin-right: 10px; margin-bottom: 8px;">
+                                    <i class="fa fa-download" style="font-size:16px;"></i> Download
+                                </button>
                             </form>
                             {% endif %}                       
                             
@@ -99,10 +100,10 @@
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-trash" style="font-size:16px;"></i>  Delete</button>
                             </form>
-                            <form method="GET" action="{% url 'edit_scroll' scroll.id %}">
+                            <!-- <form method="GET" action="{% url 'edit_scroll' scroll.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-pencil" style="font-size:16px;"></i>  Edit</button>
-                            </form>
+                            </form> -->
                             {% endif %} 
                             </div>
                         </td>

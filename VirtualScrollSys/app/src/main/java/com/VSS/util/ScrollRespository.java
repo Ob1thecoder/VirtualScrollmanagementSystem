@@ -98,7 +98,7 @@ public class ScrollRespository {
             params.add("%" + title + "%"); // partial match for the title
         }
         if (uploadedAt != null && !uploadedAt.isEmpty()) {
-            sql.append(" AND DATE(uploaded_at) = ?");
+            sql.append(" AND DATE(uploaded_at) = CAST(? AS DATE)");
             params.add(uploadedAt);
         }
 

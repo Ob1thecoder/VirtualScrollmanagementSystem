@@ -20,10 +20,11 @@ from django.contrib.auth.forms import PasswordChangeForm
 import requests
 from django.contrib.auth.decorators import user_passes_test
 
-SPRING_BOOT_API_URL = 'http://localhost:8081/api/admin/users'
-SPRING_BOOT_API_URL_S = 'http://localhost:8081/api/admin'
-SPRING_BOOT_API_BAN_URL = 'http://localhost:8081/api/admin/ban'
-SPRING_BOOT_API_UNBAN_URL = 'http://localhost:8081/api/admin/unban'
+SPRING_BOOT_API_URL = 'http://springboot-service:8081/api/admin/users'
+SPRING_BOOT_API_URL_S = 'http://springboot-service:8081/api/admin'
+SPRING_BOOT_API_BAN_URL = 'http://springboot-service:8081/api/admin/ban'
+SPRING_BOOT_API_UNBAN_URL = 'http://springboot-service:8081/api/admin/unban'
+
 CustomUser = get_user_model()
 logger = logging.getLogger(__name__)
 
@@ -144,28 +145,27 @@ def user_info(request):
 @login_required
 def user_list(request):
     try:
-        # Make a GET request to the Spring Boot API
+        
         response = requests.get(SPRING_BOOT_API_URL)
 
-        # Check if the response was successful
+        
         if response.status_code == 200:
             users = response.json()
             user1 = CustomUser.objects.all()
             if not users:
                 logger.warning("No users found in the response.")
         else:
-            users = []  # Return an empty list if the API request failed
+            users = []  
             logger.error(f"Failed to fetch users. HTTP Status Code: {response.status_code}, Reason: {response.reason}")
             return JsonResponse({'error': f"Failed to fetch users. Status code: {response.status_code}"}, status=500)
 
     except requests.exceptions.RequestException as e:
-        # Handle request exceptions (connection errors, timeouts, etc.)
+        
         users = []
         logger.error(f"Error connecting to the Spring Boot API: {e}")
         return JsonResponse({'error': f"Error connecting to the Spring Boot API: {str(e)}"}, status=500)
-
-    # Render the user list page with the fetched users
     return render(request, 'user_list.html', {'users': user1})
+
 def add_user(request):
     if request.method == 'POST':
         
@@ -242,7 +242,7 @@ def upload_scroll(request):
 
             # Upload file to Spring Boot API
             files = {'file': file}
-            data = {'title': title, 'owner': request.user.username}  # assuming you get the owner from the logged-in user
+            data = {'title': title, 'owner': request.user.username}  
             response = requests.post(f'{SPRING_BOOT_API_URL_S}/scrolls/upload', files=files, data=data)
 
             if response.status_code == 201:
@@ -322,7 +322,24 @@ def preview_scroll_page(request, id):
     response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/preview/{id}')
     if response.status_code == 200:
         scroll_content = response.text
-        return render(request, 'preview_scroll.html', {'scroll_content': scroll_content})
+        mime_type = response.headers.get('Content-Type', '')
+
+        # Fallback to manual detection if MIME type is empty
+        if not mime_type:
+            # Infer MIME type from file extension
+            file_extension = id.split('.')[-1]  
+            mime_type, _ = mimetypes.guess_type(f"file.{file_extension}")
+
+        # Ensure MIME type is checked properly
+        is_text = mime_type and mime_type.startswith("text")
+        is_image = mime_type and mime_type.startswith("image")
+
+        return render(request, 'preview_scroll.html', {
+            'scroll_content': scroll_content,
+            'mime_type': mime_type,
+            'is_text': is_text,
+            'is_image': is_image,
+        })
     else:
         return HttpResponse("Scroll preview not available", status=404)
 
@@ -362,8 +379,8 @@ def your_scrolls(request):
 
 
 
-# def download_scroll(request, id):
-#     response = requests.get(f'{SPRING_BOOT_API_URL_S}/download/{id}', stream=True)
+# def download_scroll(request, scroll_id):
+#     response = requests.get(f'{SPRING_BOOT_API_URL_S}/download/{scroll_id}', stream=True)
 #     if response.status_code == 200:
 #         response_data = response.content
 #         # Set the correct headers for file download
@@ -375,7 +392,24 @@ def your_scrolls(request):
 
 def download_scroll(request, scroll_id):
     download_url = f'{SPRING_BOOT_API_URL_S}/scrolls/download/{scroll_id}'
-    return redirect(download_url)
+    
+    try:
+        # Fetch the file from Spring Boot API
+        response = requests.get(download_url, stream=True)
+        if response.status_code == 200:
+            content_type = response.headers.get('Content-Type', 'application/octet-stream')
+            content_disposition = response.headers.get('Content-Disposition', f'attachment; filename="scroll_{scroll_id}"')
+            
+            # Create Django HttpResponse with file content
+            django_response = HttpResponse(response.content, content_type=content_type)
+            django_response['Content-Disposition'] = content_disposition
+            return django_response
+        
+        return HttpResponse("Failed to download file.", status=response.status_code)
+    
+    except requests.exceptions.RequestException as e:
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
 
 @login_required
 def edit_scroll_file(request, id):
@@ -444,4 +478,6 @@ def unban_user(request, username):
         messages.error(request, f"Error unbanning user {username}. Exception: {e}")
 
     return redirect('user_list')
+
+    
 

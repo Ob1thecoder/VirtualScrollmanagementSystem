@@ -9,7 +9,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-            .allowedOrigins("http://localhost:8000")  // Allow requests from Django
+            .allowedOrigins(        
+                "http://django_service:8000"    
+                 
+                )  
             .allowedMethods("GET", "POST", "DELETE", "PUT")
             .allowedHeaders("*")
             .allowCredentials(true);

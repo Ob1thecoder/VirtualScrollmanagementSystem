@@ -36,17 +36,16 @@ public class UserRespository {
         return jdbcTemplate.update(sql, username);
     }
 
-    // Method to ban a user (set is_banned = true)
     public int banUserByUsername(String username) {
-        String sql = "UPDATE authapp_customuser SET banned = 1 WHERE username = ?";
+        String sql = "UPDATE authapp_customuser SET banned = true WHERE username = ?";
         return jdbcTemplate.update(sql, username);
     }
-
-    // Method to unban a user (set is_banned = false)
+    
     public int unbanUserByUsername(String username) {
-        String sql = "UPDATE authapp_customuser SET banned = 0 WHERE username = ?";
+        String sql = "UPDATE authapp_customuser SET banned = false WHERE username = ?";
         return jdbcTemplate.update(sql, username);
     }
+    
 
     
 

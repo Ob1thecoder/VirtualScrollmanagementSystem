@@ -21,17 +21,24 @@
         <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">Scroll Preview</h3>
 
         <div class="container" style="margin-left: 0px; color: #EFF0F2;">
-            <div class="scroll-content">
-                {{ scroll_content }}
-            </div>
             <a href="{% url 'scroll_list' %}" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;">
                 <i class="fa fa-arrow-circle-o-left" style="font-size:16px;"></i> Back to Scroll List
             </a>
+            <div class="scroll-content"> 
+                {% if is_text %}
+                    <pre>{{ scroll_content }}</pre>
+                {% elif is_image %}
+                    <img src="data:{{ mime_type }};base64,{{ scroll_content }}" alt="Scroll Image" class="img-fluid">
+                {% else %}
+                    <p>Preview not available for this file type.</p>
+    {% endif %}
+            </div>
+            
             <br/>
 
             <style>
                 .scroll-content {
-                    white-space: pre-wrap;  /* Ensure that line breaks are preserved */
+                    white-space: pre-wrap;  
                     background-color: #EFF0F2;
                     border: 1px solid #ddd;
                     color:#262626;
@@ -40,7 +47,7 @@
                     font-size: 14px;
                     max-width: 800px;
                     margin: 20px auto;
-                    overflow-wrap: break-word;  /* Handle long words */
+                    overflow-wrap: break-word;  
                 }
             </style>
         </div>
