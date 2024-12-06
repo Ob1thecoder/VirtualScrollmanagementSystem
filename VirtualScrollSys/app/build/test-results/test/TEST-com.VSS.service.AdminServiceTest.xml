@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.VSS.service.AdminServiceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2024-12-05T17:53:37" hostname="LAPTOP-RG87O12C" time="0.063">
-  <properties/>
-  <testcase name="testAddUser()" classname="com.VSS.service.AdminServiceTest" time="0.057"/>
-  <testcase name="testGetAllUsers()" classname="com.VSS.service.AdminServiceTest" time="0.003"/>
-  <testcase name="testDeleteUserByUsername()" classname="com.VSS.service.AdminServiceTest" time="0.002"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
