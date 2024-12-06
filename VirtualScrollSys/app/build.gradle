@@ -40,6 +40,10 @@ dependencies {
     
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
+    //Apache tika for file detection
+    implementation 'org.apache.tika:tika-core:2.9.0'
+
+
     // Testing dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'

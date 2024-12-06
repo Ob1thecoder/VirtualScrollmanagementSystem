@@ -30,7 +30,7 @@
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group mb-3">
-                    <textarea class="form-control" id="file_content" name="file_content" rows="10" cols="80">{{ scroll_content }}</textarea>
+                    <textarea class="form-control" id="file_content" name="file_content" rows="10" cols="80">{{ file_content }}</textarea>
                 </div>
                 <button type="submit" name="submit" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-save" style="font-size:16px;"></i>  Save Changes</button>
             </form>

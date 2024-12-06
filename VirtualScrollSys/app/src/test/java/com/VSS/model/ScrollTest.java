@@ -17,6 +17,7 @@ public class ScrollTest {
     private String owner;
     private String uploadedAt;
     private Scroll scroll;
+    private String fileType;
 
     @BeforeEach
     public void setUp() {
@@ -25,7 +26,9 @@ public class ScrollTest {
         this.fileContent = "Another content".getBytes();
         this.owner = "user2";
         this.uploadedAt = "2024-10-17";
-        scroll = new Scroll(id, title, fileContent, owner, uploadedAt);
+        this.fileType = ".txt";
+
+        scroll = new Scroll(id, title, fileContent, owner, uploadedAt, fileType);
     }
 
     @Test

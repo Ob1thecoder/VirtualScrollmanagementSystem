@@ -90,7 +90,8 @@ DATABASES = {
         default=os.getenv('DATABASE_URL')
     )
 }
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  
 
 
 # Password validation

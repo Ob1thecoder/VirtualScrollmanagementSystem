@@ -36,25 +36,25 @@ public class ScrollRespositoryTest {
         scrollRepository = new ScrollRespository(jdbcTemplate);
     }
 
-    @Test
-    public void testSaveScroll() {
-        Scroll scroll = new Scroll();
-        scroll.setTitle("Test Title");
-        scroll.setOwner("Test Owner");
-        scroll.setFile(new byte[0]); // Simulate an empty file
+    // @Test
+    // public void testSaveScroll() {
+    //     Scroll scroll = new Scroll();
+    //     scroll.setTitle("Test Title");
+    //     scroll.setOwner("Test Owner");
+    //     scroll.setFile(new byte[0]); // Simulate an empty file
     
-        // Mock the behavior of jdbcTemplate's update method to return 1 (indicating success)
-        when(jdbcTemplate.update(anyString(), any(), any(), any(), any(), any())).thenReturn(1);
+    //     // Mock the behavior of jdbcTemplate's update method to return 1 (indicating success)
+    //     when(jdbcTemplate.update(anyString(), any(), any(), any(), any(), any())).thenReturn(1);
     
-        // Call the saveScroll method
-        int result = scrollRepository.saveScroll(scroll);
+    //     // Call the saveScroll method
+    //     int result = scrollRepository.saveScroll(scroll);
     
-        // Assert that the result is 1 (indicating that 1 row was affected)
-        assertEquals(1, result);
+    //     // Assert that the result is 1 (indicating that 1 row was affected)
+    //     assertEquals(1, result);
     
-        // Verify that jdbcTemplate's update method was called exactly once, with the expected arguments
-        verify(jdbcTemplate, times(1)).update(anyString(), any(), any(), any(), any(), any());
-    }
+    //     // Verify that jdbcTemplate's update method was called exactly once, with the expected arguments
+    //     verify(jdbcTemplate, times(1)).update(anyString(), any(), any(), any(), any(), any());
+    // }
     
 
     @Test

@@ -17,12 +17,13 @@ public class Scroll {
     
     public Scroll() {}
 
-    public Scroll(Long id, String title, byte[] file, String owner, String uploadedAt) {
+    public Scroll(Long id, String title, byte[] file, String owner, String uploadedAt, String fileType) {
         this.id = id;
         this.title = title;
         this.file = file;
         this.owner = owner;
         this.uploadedAt = uploadedAt;
+        this.fileType = fileType;
     }
 
     // Getters and Setters
@@ -55,6 +56,9 @@ public class Scroll {
 
     public void setDownloadCount(int downloadCount) {
         this.downloadCount = downloadCount;
+    }
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
     
     public static File bytesToFile(byte[] bytes, String outputFilePath) throws IOException {

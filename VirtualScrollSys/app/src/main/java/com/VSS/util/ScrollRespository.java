@@ -26,15 +26,8 @@ public class ScrollRespository {
     //     return jdbcTemplate.update(sql, scroll.getTitle(), scroll.getFile(), scroll.getOwner());
     // }
     public int saveScroll(Scroll scroll) {
-        String sql = "INSERT INTO scrolls (title, file, owner, upload_count, download_count, uploaded_at) " +
-                     "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
-        return jdbcTemplate.update(sql, 
-            scroll.getTitle(), 
-            scroll.getFile(), 
-            scroll.getOwner(), 
-            1,  
-            0   
-        );
+        String sql = "INSERT INTO scrolls (title, file, owner, uploaded_at, file_type) VALUES (?, ?, ?, NOW(), ?)";
+        return jdbcTemplate.update(sql, scroll.getTitle(), scroll.getFile(), scroll.getOwner(), scroll.getfileType());
     }
 
     // Retrieve all scrolls
@@ -116,6 +109,7 @@ public class ScrollRespository {
         scroll.setUploadedAt(rs.getString("uploaded_at"));
         scroll.setUploadCount(rs.getInt("upload_count"));  
         scroll.setDownloadCount(rs.getInt("download_count"));
+        scroll.setFileType(rs.getString("file_type"));
         return scroll;
     };
 }

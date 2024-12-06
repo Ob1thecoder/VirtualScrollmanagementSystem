@@ -35,8 +35,8 @@ public class ScrollServiceTest {
     public void testGetAllScrolls() {
         // Mock scroll data
         List<Scroll> mockScrolls = Arrays.asList(
-                new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12"),
-                new Scroll(2L, "Harry Potter", "Test2".getBytes(), "user2", "2024-10-12"));
+                new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12",".txt"),
+                new Scroll(2L, "Harry Potter", "Test2".getBytes(), "user2", "2024-10-12",".txt"));
 
         when(scrollRepository.findAll()).thenReturn(mockScrolls);
 
@@ -51,7 +51,7 @@ public class ScrollServiceTest {
 
     @Test
     public void testAddScroll() {
-        Scroll scroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12");
+        Scroll scroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12",".txt");
 
         scrollService.addScroll(scroll);
 
@@ -71,7 +71,7 @@ public class ScrollServiceTest {
     @Test
     public void testGetScrollById() {
         // Mock a scroll
-        Scroll mockScroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-21");
+        Scroll mockScroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-21",".txt");
 
         when(scrollRepository.findScrollById(1L)).thenReturn(mockScroll);
 
@@ -87,8 +87,8 @@ public class ScrollServiceTest {
     public void testGetScrollsByOwner() {
         // Mock scroll data
         List<Scroll> mockScrolls = Arrays.asList(
-                new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12"),
-                new Scroll(2L, "Harry Potter", "Test2".getBytes(), "user1", "2024-10-12"));
+                new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12",".txt"),
+                new Scroll(2L, "Harry Potter", "Test2".getBytes(), "user1", "2024-10-12",".txt"));
 
         when(scrollRepository.findScrollsByOwner("user1")).thenReturn(mockScrolls);
 
@@ -106,8 +106,8 @@ public class ScrollServiceTest {
     public void testSearchScrolls() {
         // Mock scroll data
         List<Scroll> mockScrolls = Arrays.asList(
-                new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12"),
-                new Scroll(2L, "Harry Potter", "Test2".getBytes(), "user2", "2024-10-12"));
+                new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-12",".txt"),
+                new Scroll(2L, "Harry Potter", "Test2".getBytes(), "user2", "2024-10-12",".txt"));
 
         when(scrollRepository.searchScrolls("user1", 1L, "Harry Xu", "2024-10-12")).thenReturn(mockScrolls);
 
@@ -131,7 +131,7 @@ public class ScrollServiceTest {
         ArgumentCaptor<Scroll> scrollCaptor = ArgumentCaptor.forClass(Scroll.class);
 
         // Call the service method with the updated scroll
-        Scroll newScroll = new Scroll(1L, "New title", "Test".getBytes(), "user1", "2024-10-22");
+        Scroll newScroll = new Scroll(1L, "New title", "Test".getBytes(), "user1", "2024-10-22",".txt");
         scrollService.updateScroll(newScroll);
 
         // Verify that updateScroll was called with the correct Scroll object
@@ -148,7 +148,7 @@ public class ScrollServiceTest {
     @Test
     public void testUpdateScrollContent() {
         // Mock a scroll
-        Scroll mockScroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-21");
+        Scroll mockScroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-21",".txt");
 
         when(scrollRepository.findScrollById(1L)).thenReturn(mockScroll);
 
@@ -163,7 +163,7 @@ public class ScrollServiceTest {
     @Test
     public void testUploadScroll() {
         // Call the service method
-        Scroll file = scrollService.uploadScroll("Harry Xu", "user1", "Test".getBytes());
+        Scroll file = scrollService.uploadScroll("Harry Xu", "user1", "Test".getBytes(),".txt");
 
         when(scrollRepository.saveScroll(any(Scroll.class))).thenReturn(1);
 
@@ -193,7 +193,7 @@ public class ScrollServiceTest {
     @Test
     public void testdownloadScroll() {
         // Mock a scroll
-        Scroll mockScroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-21");
+        Scroll mockScroll = new Scroll(1L, "Harry Xu", "Test".getBytes(), "user1", "2024-10-21",".txt");
 
         when(scrollRepository.findScrollById(1L)).thenReturn(mockScroll);
 

@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,25 +61,37 @@ public class ScrollController {
     // POST endpoint to upload a new scroll
     @PostMapping("/upload")
     public ResponseEntity<?> uploadScroll(
-        @RequestParam("title") String title,
-        @RequestParam("owner") String owner,
-        @RequestParam("file") MultipartFile file) {
+            @RequestParam("title") String title,
+            @RequestParam("owner") String owner,
+            @RequestParam("file") MultipartFile file) {
         try {
-            byte[] fileData = file.getBytes();
-            String mimeType = file.getContentType();
-
-            if (mimeType == null || !(mimeType.startsWith("text") || mimeType.startsWith("image") || mimeType.equals("application/pdf"))) {
-                return new ResponseEntity<>("Unsupported file type. Only text, images, and PDFs are allowed.",
-                HttpStatus.BAD_REQUEST);
+            // Check for null or empty values
+            if (title == null || title.isEmpty() || owner == null || owner.isEmpty()) {
+                return new ResponseEntity<>("Title and owner are required.", HttpStatus.BAD_REQUEST);
             }
 
-            Scroll scroll = scrollService.uploadScroll(title, owner, fileData);
-            scrollService.incrementUploadCount(scroll.getId());
+            // Get file content and validate
+            byte[] fileData = file.getBytes();
+            if (fileData.length == 0) {
+                return new ResponseEntity<>("File is empty.", HttpStatus.BAD_REQUEST);
+            }
+
+            // Extract file type and validate
+            String fileType = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+            if (!(fileType.equals("txt") || fileType.equals("pdf") || fileType.equals("jpg") || fileType.equals("png"))) {
+                return new ResponseEntity<>("Unsupported file type. Allowed types: .txt, .pdf, .jpg, .png.",
+                        HttpStatus.BAD_REQUEST);
+            }
+
+            // Upload logic
+            Scroll scroll = scrollService.uploadScroll(title, owner, fileData, fileType);
             return new ResponseEntity<>(scroll, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error uploading file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-}
+    }
+
+
 
     @GetMapping("/search")
     public ResponseEntity<List<Scroll>> searchScrolls(
@@ -93,28 +106,19 @@ public class ScrollController {
 
     // GET endpoint for previewing a scroll file (text or binary preview)
     @GetMapping("/preview/{id}")
-    public ResponseEntity<Map<String, String>> previewScroll(@PathVariable Long id) {
-        Scroll scroll = scrollService.getScrollById(id);
-        if (scroll == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Scroll not found"));
-        }
-
-        String mimeType;
-        String base64Content;
-        try {
-            mimeType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(scroll.getFile()));
-            if (mimeType == null) mimeType = "application/octet-stream";
-
-            base64Content = Base64.getEncoder().encodeToString(scroll.getFile());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to process file"));
-        }
-
-        return ResponseEntity.ok(Map.of(
-            "mime_type", mimeType,
-            "scroll_content", base64Content
-        ));
+public ResponseEntity<Map<String, Object>> previewScroll(@PathVariable Long id) {
+    Scroll scroll = scrollService.getScrollById(id);
+    if (scroll == null) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("fileType", scroll.getfileType());
+    System.out.println(scroll.getfileType());
+    response.put("file", Base64.getEncoder().encodeToString(scroll.getFile()));
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+}
 
     //Check file types
     private String detectMimeType(String fileName, byte[] fileData) {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.VSS.util.UserRepositoryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2024-12-05T17:53:39" hostname="LAPTOP-RG87O12C" time="0.008">
+  <properties/>
+  <testcase name="testSaveUser()" classname="com.VSS.util.UserRepositoryTest" time="0.003"/>
+  <testcase name="testFindAllUsers()" classname="com.VSS.util.UserRepositoryTest" time="0.003"/>
+  <testcase name="testDeleteUserByUsername()" classname="com.VSS.util.UserRepositoryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

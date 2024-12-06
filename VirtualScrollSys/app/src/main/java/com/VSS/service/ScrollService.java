@@ -17,8 +17,12 @@ public class ScrollService {
         this.scrollRepository = scrollRepository;
     }
 
-    public Scroll uploadScroll(String title, String owner, byte[] fileData) {
-        Scroll scroll = new Scroll(null, title, fileData, owner, null);
+    public Scroll uploadScroll(String title, String owner, byte[] fileData, String fileType) {
+        Scroll scroll = new Scroll(null, title, fileData, owner, null, fileType);
+        System.out.println("Title: " + title);
+        System.out.println("Owner: " + owner);
+        System.out.println("File Type: " + fileType);
+
         scrollRepository.saveScroll(scroll);
         scrollRepository.incrementUploadCount(scroll.getId());
         return scroll;
@@ -66,12 +70,12 @@ public class ScrollService {
     }
     
     public void incrementUploadCount(Long id) {
-        scrollRepository.incrementUploadCount(id);  // Increment upload count in the repository
+        scrollRepository.incrementUploadCount(id);  
     }
 
     // Increment download count for a scroll
     public void incrementDownloadCount(Long id) {
-        scrollRepository.incrementDownloadCount(id);  // Increment download count in the repository
+        scrollRepository.incrementDownloadCount(id);  
     }
     
     

@@ -1,3 +1,4 @@
+import base64
 import logging
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.hashers import make_password
@@ -240,21 +241,25 @@ def upload_scroll(request):
             title = form.cleaned_data['title']
             file = request.FILES['file']
 
-            # Upload file to Spring Boot API
             files = {'file': file}
-            data = {'title': title, 'owner': request.user.username}  
-            response = requests.post(f'{SPRING_BOOT_API_URL_S}/scrolls/upload', files=files, data=data)
+            data = {'title': title, 'owner': request.user.username}
 
-            if response.status_code == 201:
-                return redirect('scroll_list')
-            else:
-                print(f"Failed to upload scroll. Status code: {response.status_code}")
+            try:
+                response = requests.post(f'{SPRING_BOOT_API_URL_S}/scrolls/upload', files=files, data=data)
+                if response.status_code == 201:
+                    return redirect('scroll_list')
+                else:
+                    print(f"Failed to upload scroll. Status code: {response.status_code}")
+                    print(f"Response: {response.text}")
+            except Exception as e:
+                print(f"Error uploading file: {e}")
         else:
-            print("Form is not valid")
+            print("Form is not valid.")
     else:
         form = ScrollUploadForm()
 
     return render(request, 'upload_scroll.html', {'form': form})
+
 
 
 @login_required
@@ -318,30 +323,66 @@ def search_scrolls(request):
     return render(request, 'scroll_search_results.html', {'scrolls': scrolls})
 
 
+# def preview_scroll_page(request, id):
+#     response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/preview/{id}')
+#     if response.status_code == 200:
+#         scroll_content = response.text
+#         mime_type = response.headers.get('Content-Type', '')
+
+#         # Fallback to manual detection if MIME type is empty
+#         if not mime_type:
+#             # Infer MIME type from file extension
+#             file_extension = id.split('.')[-1]  
+#             mime_type, _ = mimetypes.guess_type(f"file.{file_extension}")
+
+#         # Ensure MIME type is checked properly
+#         is_text = mime_type and mime_type.startswith("text")
+#         is_image = mime_type and mime_type.startswith("image")
+
+#         return render(request, 'preview_scroll.html', {
+#             'scroll_content': scroll_content,
+#             'mime_type': mime_type,
+#             'is_text': is_text,
+#             'is_image': is_image,
+#         })
+#     else:
+#         return HttpResponse("Scroll preview not available", status=404)
 def preview_scroll_page(request, id):
     response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/preview/{id}')
+    
     if response.status_code == 200:
-        scroll_content = response.text
-        mime_type = response.headers.get('Content-Type', '')
+        data = response.json()
+        file_type = data.get('fileType')
+        file_content = data.get('file')
+        
+        if not file_content:
+            return HttpResponse("File content is empty.", status=400)
 
-        # Fallback to manual detection if MIME type is empty
-        if not mime_type:
-            # Infer MIME type from file extension
-            file_extension = id.split('.')[-1]  
-            mime_type, _ = mimetypes.guess_type(f"file.{file_extension}")
+        # Handle the content based on the file type
+        if file_type in ["jpg", "png"]:
+            # Pass Base64 data directly for images
+            return render(request, 'preview_scroll.html', {
+                'image_data': file_content, 
+                'file_type': file_type
+            })
+        elif file_type == "pdf":
+            # Pass Base64 data directly for PDFs
+            return render(request, 'preview_scroll.html', {
+                'pdf_data': file_content, 
+                'file_type': file_type
+            })
+        elif file_type == "txt":
+            # Decode Base64 string to plain text
+            text_content = base64.b64decode(file_content).decode('utf-8')
+            return render(request, 'preview_scroll.html', {
+                'text_data': text_content, 
+                'file_type': file_type
+            })
+        else:
+            return HttpResponse("Unsupported file type.", status=415)
 
-        # Ensure MIME type is checked properly
-        is_text = mime_type and mime_type.startswith("text")
-        is_image = mime_type and mime_type.startswith("image")
+    return HttpResponse("Scroll not found.", status=404)
 
-        return render(request, 'preview_scroll.html', {
-            'scroll_content': scroll_content,
-            'mime_type': mime_type,
-            'is_text': is_text,
-            'is_image': is_image,
-        })
-    else:
-        return HttpResponse("Scroll preview not available", status=404)
 
 @login_required
 def delete_scroll(request, scroll_id):
