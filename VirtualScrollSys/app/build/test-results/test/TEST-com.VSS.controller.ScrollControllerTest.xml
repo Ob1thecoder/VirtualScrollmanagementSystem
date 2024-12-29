@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.VSS.controller.ScrollControllerTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2024-12-29T17:14:51" hostname="LAPTOP-RG87O12C" time="0.254">
+  <properties/>
+  <testcase name="testEditNullScroll()" classname="com.VSS.controller.ScrollControllerTest" time="0.101"/>
+  <testcase name="testListOrSearchScrolls()" classname="com.VSS.controller.ScrollControllerTest" time="0.032"/>
+  <testcase name="testPreviewNullScroll()" classname="com.VSS.controller.ScrollControllerTest" time="0.019"/>
+  <testcase name="testDeleteNullScroll()" classname="com.VSS.controller.ScrollControllerTest" time="0.016"/>
+  <testcase name="testListScrollsByUser()" classname="com.VSS.controller.ScrollControllerTest" time="0.016"/>
+  <testcase name="testDeleteScroll()" classname="com.VSS.controller.ScrollControllerTest" time="0.014"/>
+  <testcase name="testSearchScrolls()" classname="com.VSS.controller.ScrollControllerTest" time="0.02"/>
+  <testcase name="testEditScroll()" classname="com.VSS.controller.ScrollControllerTest" time="0.015"/>
+  <testcase name="testNullListScrollsByUser()" classname="com.VSS.controller.ScrollControllerTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
