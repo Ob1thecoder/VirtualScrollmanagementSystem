@@ -60,14 +60,14 @@ jobs:
           docker save django:latest -o django.tar
           docker save springboot:latest -o springboot.tar
 
-      - name: Upload Docker images as artifacts
-        uses: actions/upload-artifact@v2
+      - name: Upload Django image as artifact
+        uses: actions/upload-artifact@v3
         with:
           name: django-image
           path: django.tar
 
-      - name: Upload Docker images as artifacts
-        uses: actions/upload-artifact@v2
+      - name: Upload Spring Boot image as artifact
+        uses: actions/upload-artifact@v3
         with:
           name: springboot-image
           path: springboot.tar
@@ -78,13 +78,13 @@ jobs:
 
     steps:
       - name: Download Django image artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: django-image
           path: .
 
       - name: Download Spring Boot image artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: springboot-image
           path: .
