@@ -73,10 +73,37 @@ def register(request):
 
 
 def admin_page(request):
-    return render(request, 'admin_page.html')
+    try:
+        response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/popular')
+        if response.status_code == 200:
+            popular_scrolls = response.json()
+        else:
+            popular_scrolls = []
+    except requests.exceptions.RequestException as e:
+        popular_scrolls = []
+        print(f"Error fetching popular scrolls: {e}")
+
+    return render(request, 'admin_page.html', {
+        'user': request.user, 
+        'popular_scrolls': popular_scrolls
+    })
+    
 
 def user_page(request):
-    return render(request, 'user_page.html')
+    try:
+        response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/popular')
+        if response.status_code == 200:
+            popular_scrolls = response.json()
+        else:
+            popular_scrolls = []
+    except requests.exceptions.RequestException as e:
+        popular_scrolls = []
+        print(f"Error fetching popular scrolls: {e}")
+
+    return render(request, 'user_page.html', {
+        'user': request.user, 
+        'popular_scrolls': popular_scrolls
+    })
 
 def logout_view(request):
     logout(request)
@@ -269,22 +296,22 @@ def list_scrolls(request):
     scroll_id = request.GET.get('id')
     title = request.GET.get('title')
     uploaded_at = request.GET.get('uploadedAt')
+    fileType = request.GET.get("fileType")
 
-    # Send a request to the Spring Boot API with search filters (if provided)
     params = {
         'owner': owner,
         'id': scroll_id,
         'title': title,
         'uploadedAt': uploaded_at
+        
     }
     try:
-        # Make a GET request to the Spring Boot API to fetch all scrolls
         response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/list')
 
         if response.status_code == 200:
-            scrolls = response.json()  # Parse the JSON response into a Python list
+            scrolls = response.json()  
         else:
-            scrolls = []  # If the request fails, return an empty list
+            scrolls = []  
             print(f"Failed to fetch scrolls. Status code: {response.status_code}")
 
     except requests.exceptions.RequestException as e:
@@ -420,16 +447,7 @@ def your_scrolls(request):
 
 
 
-# def download_scroll(request, scroll_id):
-#     response = requests.get(f'{SPRING_BOOT_API_URL_S}/download/{scroll_id}', stream=True)
-#     if response.status_code == 200:
-#         response_data = response.content
-#         # Set the correct headers for file download
-#         response = HttpResponse(response_data, content_type='application/octet-stream')
-#         response['Content-Disposition'] = f'attachment; filename="scroll_{id}.bin"'
-#         return response
-#     else:
-#         return HttpResponse("File not found", status=404)
+
 
 def download_scroll(request, scroll_id):
     download_url = f'{SPRING_BOOT_API_URL_S}/scrolls/download/{scroll_id}'

@@ -32,13 +32,18 @@ public class ScrollRespository {
 
     // Retrieve all scrolls
     public List<Scroll> findAll() {
-        String sql = "SELECT * FROM scrolls";
+        String sql = "SELECT * FROM scrolls ORDER BY id ASC";
         return jdbcTemplate.query(sql, scrollRowMapper);
     }
 
     public int updateScroll(Scroll scroll) {
         String sql = "UPDATE scrolls SET file = ? WHERE id = ?";
         return jdbcTemplate.update(sql, scroll.getFile(), scroll.getId());
+    }
+
+    public List<Scroll> populaScrolls(){
+        String sql = "SELECT * FROM scrolls ORDER BY download_count DESC LIMIT 5";
+        return jdbcTemplate.query(sql, scrollRowMapper);
     }
     
 
@@ -88,7 +93,7 @@ public class ScrollRespository {
         }
         if (title != null && !title.isEmpty()) {
             sql.append(" AND title LIKE ?");
-            params.add("%" + title + "%"); // partial match for the title
+            params.add("%" + title + "%"); 
         }
         if (uploadedAt != null && !uploadedAt.isEmpty()) {
             sql.append(" AND DATE(uploaded_at) = CAST(? AS DATE)");

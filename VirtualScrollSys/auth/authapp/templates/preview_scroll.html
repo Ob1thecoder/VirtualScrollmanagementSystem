@@ -10,6 +10,12 @@
 	
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- for pdf viewer -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
+    
     
     <title>Scroll Preview</title>
 </head>
@@ -27,17 +33,188 @@
 
             
                 {% if file_type == "jpg" or file_type == "png" %}
-                    <div class="container-md">
-                        <img src="data:image/{{ file_type }};base64,{{ image_data }}" class="img-fluid" alt="Image preview" />
+                    <div class="image-container">
+                        <img src="data:image/{{ file_type }};base64,{{ image_data }}" alt="Image preview" />
                     </div>
                 {% elif file_type == "pdf" %}
-                    <div class="container-md">
-                        <iframe src="data:application/pdf;base64,{{ pdf_data }}" frameborder="1" 
-                        width="100%"
-                        allowfullscreen = 1
-                        min-height: 800px
-                        style="border: 0; overflow: auto; height: 400px"></iframe>
+                <!-- <div class="pdf-container">
+                    <iframe title="UserPDF" src="data:application/pdf;base64,{{ pdf_data|safe }}" style="width:600px; height:500px;" ></iframe>
+                </div> -->
+
+                <div class="pdf-container">
+                    <!-- Navigation for PDF Viewer -->
+                    <ul class="nav nav-tabs d-flex justify-content-between align-items-center text-dark p-3">
+                        <li class="nav-item">
+                            
+                           
+                            
+                            Page <span id="page_num"></span> of <span id="page_count"></span>
+                        </li>
+                        <li class="nav-item"> <a href="#" class="p-1 border rounded-circle" id="prev_page">
+                            <i class="bi bi-chevron-left"></i>
+                        </a></li>
+                        <li class="nav-item"> <input type="number" id="current_page" value="1" class="d-inline form-control" /></li>
+                        
+                        <li class="nav-item"> <a href="#" class="p-1 border rounded-circle" id="next_page">
+                            <i class="bi bi-chevron-right"></i>
+                        </a></li>
+                
+                
+                        <li class="nav-item">
+                            <button class="rounded-circle p-2 border-0 btn btn-primary" id="zoom_in">
+                                <i class="bi bi-zoom-in"></i>
+                            </button>
+                            <button class="rounded-circle p-2 border-0 btn btn-primary" id="zoom_out">
+                                <i class="bi bi-zoom-out"></i>
+                            </button>
+                        </li>
+                    </ul>
+                
+                    <!-- Canvas for rendering the PDF -->
+                    
+                    <div class="pdf-viewer">
+                        <canvas id="pdf_canvas" class="d-flex flex-column justify-content-center align-items-center mx-auto"></canvas>
                     </div>
+                </div>
+                
+                <!-- PDF.js CDN -->
+                <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.min.js"></script>
+                
+                <script>
+                    // Base64 PDF Data from Django View
+                    const base64PdfData = `{{ pdf_data|safe }}`;
+                
+                    // Decode Base64 to Uint8Array
+                    const pdfData = Uint8Array.from(atob(base64PdfData), c => c.charCodeAt(0));
+                
+                    // PDF.js Configuration
+                    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.worker.min.js';
+                
+                    let pdfDoc = null;
+                    let pageNum = 1;
+                    let pageRendering = false;
+                    let pageNumPending = null;
+                    const scale = 1.5; 
+                    let currentScale = scale;
+                    const canvas = document.getElementById('pdf_canvas');
+                    const ctx = canvas.getContext('2d');
+                
+                    // Load PDF
+                    pdfjsLib.getDocument({ data: pdfData }).promise.then(doc => {
+                        pdfDoc = doc;
+                        document.getElementById('page_count').textContent = pdfDoc.numPages;
+                        renderPage(pageNum);
+                    });
+                
+                    // Render Page
+                    function renderPage(num) {
+                        pageRendering = true;
+                        pdfDoc.getPage(num).then(page => {
+                            const viewport = page.getViewport({ scale: currentScale });
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+                
+                            const renderContext = {
+                                canvasContext: ctx,
+                                viewport: viewport,
+                            };
+                            page.render(renderContext).promise.then(() => {
+                                pageRendering = false;
+                                if (pageNumPending !== null) {
+                                    renderPage(pageNumPending);
+                                    pageNumPending = null;
+                                }
+                            });
+                        });
+                
+                        document.getElementById('page_num').textContent = num;
+                    }
+                
+                    // Queue Page Render
+                    function queueRenderPage(num) {
+                        if (pageRendering) {
+                            pageNumPending = num;
+                        } else {
+                            renderPage(num);
+                        }
+                    }
+                
+                    // Show Previous Page
+                    document.getElementById('prev_page').addEventListener('click', () => {
+                        if (pageNum <= 1) return;
+                        pageNum--;
+                        queueRenderPage(pageNum);
+                    });
+                
+                    // Show Next Page
+                    document.getElementById('next_page').addEventListener('click', () => {
+                        if (pageNum >= pdfDoc.numPages) return;
+                        pageNum++;
+                        queueRenderPage(pageNum);
+                    });
+                
+                    // Zoom In
+                    document.getElementById('zoom_in').addEventListener('click', () => {
+                        currentScale += 0.2;
+                        renderPage(pageNum);
+                    });
+                
+                    // Zoom Out
+                    document.getElementById('zoom_out').addEventListener('click', () => {
+                        currentScale = Math.max(currentScale - 0.2, 0.5); 
+                        renderPage(pageNum);
+                    });
+                
+                    // Update Page Number Input
+                    document.getElementById('current_page').addEventListener('change', (e) => {
+                        const inputPage = parseInt(e.target.value);
+                        if (inputPage >= 1 && inputPage <= pdfDoc.numPages) {
+                            pageNum = inputPage;
+                            queueRenderPage(pageNum);
+                        } else {
+                            e.target.value = pageNum; 
+                        }
+                    });
+                </script>
+                
+                
+                    
+                
+                <style>
+                 
+                .pdf-viewer {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    max-width: 100%;
+                }
+                canvas {
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    max-width: 100%;
+                    min-height: 400px;
+                    height: auto;
+                }
+                
+                ul.nav-tabs {
+                    width: 100%;
+                    padding: 10px;
+                    background: #ffffff;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+                
+                
+                
+                
+                </style>
+                
+
+                    
+
                 {% elif file_type == "txt" %}
                 <div class="scroll-content">{{ text_data }}</div>
                 {% else %}
@@ -50,51 +227,71 @@
             <br/>
 
             <style>
-                /* .scroll-container {
-                    display: flex; 
-                    justify-content: center; 
-                    align-items: center; 
-                    min-height: 100vh; 
-                    margin: 0; 
-                    padding: 20px; 
-                    background-color: #0e1724; 
-
-<div id="doc_preview" data-canvadoc_session_url="/api/v1/canvadoc_session?blob=%7B%22anonymous_instructor_annotations%22:null,%22enable_annotations%22:null,%22moderated_grading_allow_list%22:null,%22submission_id%22:null,%22user_id%22:31560000000293513,%22attachment_id%22:38879685,%22type%22:%22canvadoc%22%7D&amp;hmac=19512f2bad57175bbb096ca6b2997358e2ba1786" data-attachment_id="38879685" data-mimetype="application/pdf" data-attachment_view_inline_ping_url="https://canvas.sydney.edu.au/courses/59329/files/38879685/inline_view" data-attachment_preview_processing="true" style="height: 400px;"><div style="overflow: auto; resize: vertical; border: 1px solid transparent; height: 100%;"><iframe src="/api/v1/canvadoc_session?blob=%7B%22anonymous_instructor_annotations%22:null,%22enable_annotations%22:null,%22moderated_grading_allow_list%22:null,%22submission_id%22:null,%22user_id%22:31560000000293513,%22attachment_id%22:38879685,%22type%22:%22canvadoc%22%7D&amp;hmac=19512f2bad57175bbb096ca6b2997358e2ba1786" width="100%" allowfullscreen="1" style="border: 0; overflow: auto; height: 99%; min-height: 800px" id="undefined"></iframe></div></div>
-
-                    <div id="doc_preview" data-canvadoc_session_url="/api/v1/canvadoc_session?blob=%7B%22anonymous_instructor_annotations%22:null,%22enable_annotations%22:null,%22moderated_grading_allow_list%22:null,%22submission_id%22:null,%22user_id%22:31560000000293513,%22attachment_id%22:38879685,%22type%22:%22canvadoc%22%7D&amp;hmac=19512f2bad57175bbb096ca6b2997358e2ba1786" data-attachment_id="38879685" data-mimetype="application/pdf" data-attachment_view_inline_ping_url="https://canvas.sydney.edu.au/courses/59329/files/38879685/inline_view" data-attachment_preview_processing="true" style="height: 400px;"><div style="overflow: auto; resize: vertical; border: 1px solid transparent; height: 100%;"><iframe src="/api/v1/canvadoc_session?blob=%7B%22anonymous_instructor_annotations%22:null,%22enable_annotations%22:null,%22moderated_grading_allow_list%22:null,%22submission_id%22:null,%22user_id%22:31560000000293513,%22attachment_id%22:38879685,%22type%22:%22canvadoc%22%7D&amp;hmac=19512f2bad57175bbb096ca6b2997358e2ba1786" width="100%" allowfullscreen="1" style="border: 0; overflow: auto; height: 99%; min-height: 800px" id="undefined"></iframe></div></div>
-                } */
+               
                 
                 .image-container img {
-                    max-width: 100%;
-                    margin: auto;
-                    height: auto;
-                    justify-content: center; 
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 500px;
                     align-items: center;
-                    display: block;
-                    border: 10px solid #ccc;
+                    justify-content: center;
+                    background: #222024;
+                    border: 2px solid #62029a;
+                    border-radius: 10px;
+                    padding: 20px;
+                    max-width: 90%;
+                    
+                    margin: 20px auto;
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                    border-radius: 5px;
                 }
 
                 
-                .pdf-container iframe {
-                    width: 100%;
-                    margin: auto;
-                    max-width: 800px;
-                    height: 600px;
-                    border: 1px solid #ccc;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                .pdf-container  {
+                    
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);;
+                    border: 2px solid #62029a;
                     border-radius: 10px;
+                    padding: 20px;
+                    max-width: 90%;
+                    min-height: 500px;
+                    margin: 20px auto;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+                .pdf-viewer {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    max-width: 100%;
+                }
+                canvas {
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    max-width: 100%;
+                    height: auto;
+                }
+                ul.nav-tabs {
+                    width: 100%;
+                    padding: 10px;
+                    background: #ffffff;
+                    border-radius: 5px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 }
                 .scroll-content {
                     white-space: pre-wrap;  
-                    background-color: #dacfe2;
-                    border: 1px solid #9032b8;
+                    background-color: #ecd4e6;
+                    border: 0.5px solid #9032b8;
                     color:#262626;
                     padding: 15px;
                     font-family: monospace;
                     font-size: 21px;
                     max-width: 800px;
+                    min-height: 500px;
                     margin: 20px auto;
                     overflow-wrap: break-word;  
                 }
@@ -102,7 +299,23 @@
                 
                 
             </style>
+            
+           
         </div>
         </div> 
     </div>
+    
+    
+    
+    <!-- include the JavaScript and Popper.js libraries via a CDN -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+        crossorigin="anonymous"
+    ></script>
 </body>

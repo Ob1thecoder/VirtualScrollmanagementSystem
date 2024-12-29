@@ -46,6 +46,10 @@ public class ScrollService {
         return scrollRepository.findAll();
     }
 
+    public List<Scroll> getPopularScroll(){
+        return scrollRepository.populaScrolls();
+    }
+
     
 
     // // Upload a scroll

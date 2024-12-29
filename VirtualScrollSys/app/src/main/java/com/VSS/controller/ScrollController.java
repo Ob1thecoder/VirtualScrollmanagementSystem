@@ -2,12 +2,6 @@ package com.VSS.controller;
 
 
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +51,11 @@ public class ScrollController {
         List<Scroll> scrolls = scrollService.searchScrolls(owner, id, title, uploadedAt);
         return new ResponseEntity<>(scrolls, HttpStatus.OK);
     }
+    @GetMapping("/popular")
+    public ResponseEntity<List<Scroll>> getPopularScrolls() {
+        List<Scroll> popularScrolls = scrollService.getPopularScroll();
+        return new ResponseEntity<>(popularScrolls, HttpStatus.OK);
+    }
 
     // POST endpoint to upload a new scroll
     @PostMapping("/upload")
@@ -104,7 +103,7 @@ public class ScrollController {
         return ResponseEntity.ok(scrolls);
     }
 
-    // GET endpoint for previewing a scroll file (text or binary preview)
+    // GET endpoint for previewing a scroll file 
     @GetMapping("/preview/{id}")
 public ResponseEntity<Map<String, Object>> previewScroll(@PathVariable Long id) {
     Scroll scroll = scrollService.getScrollById(id);
@@ -120,19 +119,8 @@ public ResponseEntity<Map<String, Object>> previewScroll(@PathVariable Long id) 
     return new ResponseEntity<>(response, HttpStatus.OK);
 }
 
-    //Check file types
-    private String detectMimeType(String fileName, byte[] fileData) {
-        try {
-            return Files.probeContentType(Path.of(fileName));
-        } catch (IOException e) {
-            try (InputStream inputStream = new ByteArrayInputStream(fileData)) {
-                return URLConnection.guessContentTypeFromStream(inputStream);
-            } catch (IOException ex) {
-                return "application/octet-stream";
-            }
-    }
-}
-
+    
+    
     @GetMapping("/list/{username}")
     public ResponseEntity<List<Scroll>> listScrollsByUser(@PathVariable String username) {
         List<Scroll> scrolls = scrollService.getScrollsByOwner(username);
@@ -191,7 +179,7 @@ public ResponseEntity<Map<String, Object>> previewScroll(@PathVariable Long id) 
     
         // Set appropriate headers for file download
         HttpHeaders headers = new HttpHeaders();
-        String fileName = scroll.getTitle() + ".txt";  
+        String fileName = scroll.getTitle() + "." +scroll.getfileType();  
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
     
         // Return the file as a downloadable resource

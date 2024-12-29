@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.VSS.service.ScrollServiceTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2024-12-13T05:00:35" hostname="LAPTOP-RG87O12C" time="0.113">
+  <properties/>
+  <testcase name="testincrementDownloadCount()" classname="com.VSS.service.ScrollServiceTest" time="0.072"/>
+  <testcase name="testUploadNullScrollContent()" classname="com.VSS.service.ScrollServiceTest" time="0.003"/>
+  <testcase name="testGetScrollsByOwner()" classname="com.VSS.service.ScrollServiceTest" time="0.003"/>
+  <testcase name="testUploadScroll()" classname="com.VSS.service.ScrollServiceTest" time="0.003"/>
+  <testcase name="testincrementUploadCount()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testUpdateScrollContent()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testUpdateScroll()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testDeleteScroll()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testdownloadScroll()" classname="com.VSS.service.ScrollServiceTest" time="0.003"/>
+  <testcase name="testdownloadNullScroll()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testGetAllScrolls()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testAddScroll()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testSearchScrolls()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <testcase name="testGetScrollById()" classname="com.VSS.service.ScrollServiceTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

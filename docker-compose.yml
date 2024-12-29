@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/virtualscroll
-      SPRING_BOOT_API_URL: http://localhost:8081
+      SPRING_BOOT_API_URL: http://springboot-service:8081/api
     depends_on:
       - db
       - springboot
@@ -54,9 +54,9 @@ services:
     networks:
       - app_network
 
-volumes:
-  postgres_data:
-
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  postgres_data:

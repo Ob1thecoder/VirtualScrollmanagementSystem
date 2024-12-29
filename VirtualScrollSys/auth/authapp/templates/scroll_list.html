@@ -1,56 +1,167 @@
 {% include 'top.html' %}
 <head>
-    <!-- Required meta tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Scrolls</title>
 
     <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-	
-    <!-- Font Awesome CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
-    <title>Manage Scrolls</title>
+
+    <style>
+        /* General Styles */
+        .page-container {
+            padding: 25px;
+        }
+
+        /* Card View */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .scroll-card {
+            background-color: #222024;
+            color: #EFF0F2;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: calc(33.333% - 16px);
+        }
+
+        .scroll-card:hover {
+            background: linear-gradient(90deg, #803bb1 0%, #6d2fab 100%);
+        }
+
+        .scroll-card h5 {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .scroll-card-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            .scroll-card {
+                width: calc(50% - 16px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scroll-card {
+                width: 100%;
+            }
+        }
+
+        /* Table View */
+        .table-container {
+            display: none; 
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #131313;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #222024;
+        }
+
+        tbody tr:hover {
+            background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);
+        }
+
+        tbody tr:hover td {
+            color: #EFF0F2;
+        }
+    </style>
 </head>
 <body>
-    <div class="page-container">             
-        <!-- Page Section -->
-        <div style="padding-left: 25px; margin-right: 25px; margin-top: 25px;">
-
-            <!-- Search Scroll -->
-            <div class="container-12" style="margin-bottom: 25px;">
-                <div class="card p-3" style="background-color: #222024; color: #EFF0F2; border-radius: 15px;">
-                    <h4 class="card-title mb-3">Search Scroll</h4>
-
-                    <form method="GET" action="{% url 'search_scrolls' %}"> <!-- Redirect to a new search results page -->
-                    <div class = "row align-items-center">
-                        <div class="form-group col-md-2">
-                            <label for="scrollId" class="mb-1">Scroll ID:</label>                            
-                            <input type="number" class="form-control" name="id" id="scrollId" placeholder="Enter Scroll ID" style="background-color: #262626; color: #EFF0F2">
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="title" class="mb-1">Title:</label>
-                            <input type="text" class="form-control" name="title" id="title" placeholder="Enter title" style="background-color: #262626; color: #EFF0F2">
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="owner" class="mb-1">Uploader:</label>                            
-                            <input type="text" class="form-control" name="owner" id="owner" placeholder="Enter Uploader ID" style="background-color: #262626; color: #EFF0F2">
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="uploadedAt" class="mb-1">Upload Date:</label>
-                            <input type="date" class="form-control" id="uploadedAt" name="uploadedAt" style="background-color: #262626; color: #EFF0F2">
-                        </div>
-                        <div class="col-md-1">
-                            <button type="submit" name="submit" class="btn btn-primary" style="margin-top: 10px;"> <i class="fa fa-search" style="font-size:16px;"></i> </button>
-                        </div>
+    <div class="page-container">
+        <!-- Search Section -->
+        <div class="card p-3 mb-4" style="background-color: #222024; color: #EFF0F2; border-radius: 15px;">
+            <h4 class="card-title mb-3">Search Scroll</h4>
+            <form method="GET" action="{% url 'search_scrolls' %}">
+                <div class="row align-items-center">
+                    <div class="form-group col-md-2">
+                        <label for="scrollId" class="mb-1">Scroll ID:</label>
+                        <input type="number" class="form-control" name="id" id="scrollId" placeholder="Enter Scroll ID" style="background-color: #262626; color: #EFF0F2;">
                     </div>
+                    <div class="form-group col-md-3">
+                        <label for="title" class="mb-1">Title:</label>
+                        <input type="text" class="form-control" name="title" id="title" placeholder="Enter title" style="background-color: #262626; color: #EFF0F2;">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="owner" class="mb-1">Uploader:</label>
+                        <input type="text" class="form-control" name="owner" id="owner" placeholder="Enter Uploader ID" style="background-color: #262626; color: #EFF0F2;">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="uploadedAt" class="mb-1">Upload Date:</label>
+                        <input type="date" class="form-control" name="uploadedAt" id="uploadedAt" style="background-color: #262626; color: #EFF0F2;">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" name="submit" class="btn btn-primary mt-3">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Toggle Button -->
+        <div class="text-end mb-3">
+            <button id="toggleViewButton" class="btn btn-primary">
+                <i class="fa fa-th"></i> Toggle to Table View
+            </button>
+        </div>
+
+        <!-- Card View -->
+        <div class="card-container">
+            {% for scroll in scrolls %}
+            <div class="scroll-card">
+                <h5>Title: {{ scroll.title }}</h5>
+                <p><strong>ID:</strong> {{ scroll.id }}</p>
+                <p><strong>Uploader:</strong> {{ scroll.owner }}</p>
+                <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
+                <p><strong>Downloads:</strong> {{ scroll.fileType }}</p>
+                <p><strong>Downloads:</strong> {{ scroll.downloadCount }}</p>
+                <div class="scroll-card-actions">
+                    <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa fa-eye"></i> Preview
+                        </button>
                     </form>
+                    {% if request.user.idKey != 'guest' %}
+                    <form method="GET" action="{% url 'download_scroll' scroll.id %}">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-download"></i> Download
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% if request.user.role == 'admin' %}
+                    <form method="POST" action="{% url 'delete_scroll' scroll.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash"></i> Delete
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
+            {% endfor %}
+        </div>
 
-            <!-- Scroll Table -->
-            <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">List of Scrolls</h3>
+        <!-- Table View -->
+        <div class="table-container">
             {% if scrolls %}
             <table class="table table-hover table-bordered border-secondary" style="color: #EFF0F2;">
                 <thead>
@@ -59,14 +170,11 @@
                         <th>Title</th>
                         <th>Uploader</th>
                         <th>Upload Date</th>
-                        {% if request.user.role == 'admin' %}
-                            <th>Uploads</th>  
-                            <th>Downloads</th>
-                        {% endif %}
+                        <th>Media Type</th>
+                        <th>Downloads</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for scroll in scrolls %}
                     <tr>
@@ -74,66 +182,55 @@
                         <td>{{ scroll.title }}</td>
                         <td>{{ scroll.owner }}</td>
                         <td>{{ scroll.uploadedAt }}</td>
-                        {% if request.user.role == 'admin' %}
-                            <td>{{ scroll.uploadCount }}</td>
-                            <td>{{ scroll.downloadCount }}</td>
-                        {% endif %}                        
+                        <td>{{ scroll.fileType }}</td>
+                        <td>{{ scroll.downloadCount }}</td>
                         <td>
                             <div class="d-inline-flex">
-                            <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-warning" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-eye" style="font-size:16px;"></i>  Preview</button>
-                            </form> 
-                            {% if request.user.idKey != 'guest' %}  
-                            <form method="GET" action="{% url 'download_scroll' scroll.id %}">
-                                <button type="submit" class="btn btn-success" style="margin-right: 10px; margin-bottom: 8px;">
-                                    <i class="fa fa-download" style="font-size:16px;"></i> Download
-                                </button>
-                            </form>
-                            {% endif %}                       
-                            
-                            {% if request.user.role == 'admin' %}
-                            
-
-
-                            <form method="POST" action="{% url 'delete_scroll' scroll.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-trash" style="font-size:16px;"></i>  Delete</button>
-                            </form>
-                            <!-- <form method="GET" action="{% url 'edit_scroll' scroll.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;"><i class="fa fa-pencil" style="font-size:16px;"></i>  Edit</button>
-                            </form> -->
-                            {% endif %} 
+                                <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fa fa-eye"></i> Preview
+                                    </button>
+                                </form>
+                                <form method="GET" action="{% url 'download_scroll' scroll.id %}">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fa fa-download"></i> Download
+                                    </button>
+                                </form>
+                                {% if request.user.role == 'admin' %}
+                                <form method="POST" action="{% url 'delete_scroll' scroll.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
-            <style>
-                /* Custom striped rows */                
-                tbody tr:nth-child(odd) {
-                    background-color: #131313;
-                }
-                tbody tr:nth-child(even) {
-                    background-color: #222024;
-                }
-
-                /* Hover effect for table rows */
-                tbody tr:hover {
-                    background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);
-                }
-
-                tbody tr:hover td {
-                    color: #EFF0F2;
-                }
-            </style>
-            
             {% else %}
             <p>No scrolls found.</p>
             {% endif %}
-        </div> 
+        </div>
     </div>
+
+    <script>
+        const toggleButton = document.getElementById('toggleViewButton');
+        const tableContainer = document.querySelector('.table-container');
+        const cardContainer = document.querySelector('.card-container');
+
+        toggleButton.addEventListener('click', () => {
+            if (cardContainer.style.display === 'none') {
+                cardContainer.style.display = 'flex';
+                tableContainer.style.display = 'none';
+                toggleButton.innerHTML = '<i class="fa fa-table"></i> Toggle to Table View';
+            } else {
+                cardContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+                toggleButton.innerHTML = '<i class="fa fa-th"></i> Toggle to Card View';
+            }
+        });
+    </script>
 </body>

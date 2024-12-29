@@ -10,6 +10,58 @@
 	
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+            
+    
+        .popular-scrolls {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .scroll-card {
+            background-color: #222024;
+            color: #EFF0F2;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: calc(33.333% - 16px);
+        }
+
+        .scroll-card:hover {
+            background: linear-gradient(90deg, #803bb1 0%, #6d2fab 100%);
+        }
+
+        .scroll-card h5 {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .scroll-card-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            .scroll-card {
+                width: calc(50% - 16px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scroll-card {
+                width: 100%;
+            }
+        }
+    </style>
+    
     
     <title>User Dashboard</title>
 </head>
@@ -25,5 +77,47 @@
                 <p>May your scrolls be ever accessible and your knowledge ever expanding!</p>
             </div>
         </div> 
+        <!-- New Popular Scrolls Section -->
+        <div class="popular-scrolls mt-4" style="background-color: #343a40; color: #EFF0F2; border-radius: 5px; padding: 20px;">
+            <h3 class="text-center" style="color: #C085FB;">Top 5 Most Popular Scrolls</h3>
+            
+            <div class="card-container">
+                <h3 class="text-center" style="color: #C085FB; width: 100%;">Top 5 Most Popular Scrolls</h3>
+                {% for scroll in popular_scrolls %}
+                <div class="scroll-card">
+                    <h5>Title: {{ scroll.title }}</h5>
+                    <p><strong>ID:</strong> {{ scroll.id }}</p>
+                    <p><strong>Uploader:</strong> {{ scroll.owner }}</p>
+                    <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
+                    <p><strong>File Type:</strong> {{ scroll.fileType }}</p>
+                    <p><strong>Downloads:</strong> {{ scroll.downloadCount }}</p>
+                    <div class="scroll-card-actions">
+                        <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fa fa-eye"></i> Preview
+                            </button>
+                        </form>
+                        {% if request.user.idKey != 'guest' %}
+                        <form method="GET" action="{% url 'download_scroll' scroll.id %}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-download"></i> Download
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if request.user.role == 'admin' %}
+                        <form method="POST" action="{% url 'delete_scroll' scroll.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+            
+        
     </div>
 </body>

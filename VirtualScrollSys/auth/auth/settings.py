@@ -28,7 +28,10 @@ SECRET_KEY = 'django-insecure-w!kamkd-%)j%9mhz)3_co$g4+r_&9ya%+^3$g7s&@m76^seo&a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+# tempoarily setting
+ALLOWED_HOSTS = ['*'] 
+
 
 
 
@@ -55,7 +58,27 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+CSRF_TRUSTED_ORIGINS = ["https://virtualscrollaccesssystem.azurewebsites.net"]
 ROOT_URLCONF = 'auth.urls'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/tmp/django.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 TEMPLATES = [
     {
@@ -86,9 +109,7 @@ WSGI_APPLICATION = 'auth.wsgi.application'
 #     }
 # }
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
-    )
+    'default': dj_database_url.config(default='postgres://postgres:password@db:5432/virtualscroll')
 }
 FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  
