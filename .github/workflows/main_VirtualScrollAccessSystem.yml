@@ -47,13 +47,52 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build and push Django image
+      - name: Build Django image
         run: |
           docker build -t django:latest ./VirtualScrollSys/auth
 
-      - name: Build and push Spring Boot image
+      - name: Build Spring Boot image
         run: |
           docker build -t springboot:latest ./VirtualScrollSys/app
+
+      - name: Save Docker images as tar files
+        run: |
+          docker save django:latest -o django.tar
+          docker save springboot:latest -o springboot.tar
+
+      - name: Upload Docker images as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: django-image
+          path: django.tar
+
+      - name: Upload Docker images as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: springboot-image
+          path: springboot.tar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+
+    steps:
+      - name: Download Django image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: django-image
+          path: .
+
+      - name: Download Spring Boot image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: springboot-image
+          path: .
+
+      - name: Load Docker images from tar files
+        run: |
+          docker load -i django.tar
+          docker load -i springboot.tar
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
