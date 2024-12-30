@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   django:
-    build:
-      context: ./VirtualScrollSys/auth
+    image: virtualscrollaccesssystem.azurecr.io/django-service:latest
     container_name: django-service
     ports:
       - "8000:8000"
@@ -17,8 +16,7 @@ services:
       - app_network
 
   springboot:
-    build:
-      context: ./VirtualScrollSys/app
+    image: virtualscrollaccesssystem.azurecr.io/springboot-service:latest
     container_name: springboot-service
     ports:
       - "8081:8081"
