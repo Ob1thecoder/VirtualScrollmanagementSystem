@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   django:
-    image: virtualscrollaccesssystem.azurecr.io/django-service:latest
+    build:
+      context: ./VirtualScrollSys/auth
     container_name: django-service
     ports:
       - "8000:8000"
@@ -16,7 +17,8 @@ services:
       - app_network
 
   springboot:
-    image: virtualscrollaccesssystem.azurecr.io/springboot-service:latest
+    build:
+      context: ./VirtualScrollSys/app
     container_name: springboot-service
     ports:
       - "8081:8081"
@@ -35,7 +37,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: virtualscroll
     volumes:
-      - ${WEBAPP_STORAGE_HOME}/postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - app_network
 
@@ -45,7 +47,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ${WEBAPP_STORAGE_HOME}/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - django
       - springboot
