@@ -47,13 +47,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build and push Django image
-        run: |
-          docker build -t django:latest ./VirtualScrollSys/auth
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
 
-      - name: Build and push Spring Boot image
+      - name: Build and push Docker images
         run: |
-          docker build -t springboot:latest ./VirtualScrollSys/app
+          docker-compose -f docker-compose.yml build
+          docker tag virtualscrollmanagementsystem_django:latest ghcr.io/${{ github.repository }}/django:latest
+          docker tag virtualscrollmanagementsystem_springboot:latest ghcr.io/${{ github.repository }}/springboot:latest
+          docker push ghcr.io/${{ github.repository }}/django:latest
+          docker push ghcr.io/${{ github.repository }}/springboot:latest
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -61,5 +68,5 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: |
-            django:latest
-            springboot:latest
+            ghcr.io/${{ github.repository }}/django:latest
+            ghcr.io/${{ github.repository }}/springboot:latest
