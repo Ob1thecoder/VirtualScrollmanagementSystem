@@ -63,8 +63,8 @@ jobs:
       - name: Build and push Docker images
         run: |
           docker-compose -f docker-compose.yml build
-          docker tag virtualscrollmanagementsystem_django:latest ghcr.io/${{ github.repository }}/django:latest
-          docker tag virtualscrollmanagementsystem_springboot:latest ghcr.io/${{ github.repository }}/springboot:latest
+          docker tag virtualscrollmanagementsystem_django:latest ghcr.io/virtualscrollmanagementsystem/django:latest
+          docker tag virtualscrollmanagementsystem_springboot:latest ghcr.io/virtualscrollmanagementsystem/springboot:latest
           docker push ghcr.io/virtualscrollmanagementsystem/django:latest
           docker push ghcr.io/virtualscrollmanagementsystem/springboot:latest
 
