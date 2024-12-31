@@ -28,6 +28,7 @@ name: Build and deploy a container to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: VirtualScrollAccessSystem  # set this to the name of your Azure Web App
+  REPO_NAME: virtualscrollmanagementsystem  # set this to the name of your repository in lowercase
 
 on:
   push:
@@ -63,10 +64,10 @@ jobs:
       - name: Build and push Docker images
         run: |
           docker-compose -f docker-compose.yml build
-          docker tag virtualscrollmanagementsystem_django:latest ghcr.io/virtualscrollmanagementsystem/django:latest
-          docker tag virtualscrollmanagementsystem_springboot:latest ghcr.io/virtualscrollmanagementsystem/springboot:latest
-          docker push ghcr.io/virtualscrollmanagementsystem/django:latest
-          docker push ghcr.io/virtualscrollmanagementsystem/springboot:latest
+          docker tag virtualscrollmanagementsystem_django:latest ghcr.io/${{ env.REPO_NAME }}/django:latest
+          docker tag virtualscrollmanagementsystem_springboot:latest ghcr.io/${{ env.REPO_NAME }}/springboot:latest
+          docker push ghcr.io/${{ env.REPO_NAME }}/django:latest
+          docker push ghcr.io/${{ env.REPO_NAME }}/springboot:latest
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -74,5 +75,5 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: |
-            ghcr.io/virtualscrollmanagementsystem/django:latest
-            ghcr.io/virtualscrollmanagementsystem/springboot:latest
+            ghcr.io/${{ env.REPO_NAME }}/django:latest
+            ghcr.io/${{ env.REPO_NAME }}/springboot:latest
