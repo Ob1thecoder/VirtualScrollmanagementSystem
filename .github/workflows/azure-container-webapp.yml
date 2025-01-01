@@ -28,8 +28,8 @@ name: Build and deploy containers to Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: VirtualScrollAccessSystem  # set this to the name of your Azure Web App
-  GITHUB_USERNAME: Ob1thecoder
-  REPO_NAME: VirtualScrollmanagementSystem
+  GITHUB_USERNAME: ob1thecoder
+  REPO_NAME: virtualscrollmanagementsystem
 
 on:
   push:
