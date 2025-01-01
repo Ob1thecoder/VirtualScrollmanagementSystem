@@ -28,6 +28,7 @@ name: Build and deploy a container to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: VirtualScrollAccessSystem  # set this to the name of your Azure Web App
+  REPO_NAME: virtualscrollmanagementsystem
 
 on:
   push:
@@ -54,10 +55,13 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}
       - name: Build and push Django image
         run: |
-          docker build -t django:latest ./VirtualScrollSys/auth
+          docker build -t ghcr.io/${{ env.REPO_NAME }}/django:latest ./VirtualScrollSys/auth
+          docker push ghcr.io/${{ env.REPO_NAME }}/django:latest
+
       - name: Build and push Spring Boot image
         run: |
-          docker build -t springboot:latest ./VirtualScrollSys/app
+          docker build -t ghcr.io/${{ env.REPO_NAME }}/springboot:latest ./VirtualScrollSys/app
+          docker push ghcr.io/${{ env.REPO_NAME }}/springboot:latest
       
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -65,5 +69,5 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: |
-            django:latest
-            springboot:latest
+            ghcr.io/${{ env.REPO_NAME }}/django:latest
+            ghcr.io/${{ env.REPO_NAME }}/springboot:latest
