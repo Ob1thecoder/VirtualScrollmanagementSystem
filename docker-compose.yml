@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   django:
+    image: ghcr.io/ob1thecoder/virtualscrollmanagementsystem-django:latest
     build:
       context: ./VirtualScrollSys/auth
     container_name: django-service
@@ -18,6 +19,7 @@ services:
     restart: always  
 
   springboot:
+    image: ghcr.io/ob1thecoder/virtualscrollmanagementsystem-springboot:latest
     build:
       context: ./VirtualScrollSys/app
     container_name: springboot-service
