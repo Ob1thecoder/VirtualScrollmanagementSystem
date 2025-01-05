@@ -72,6 +72,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: |
-            ghcr.io/${{ env.GITHUB_USERNAME }}/${{ env.REPO_NAME }}-django:latest
-            ghcr.io/${{ env.GITHUB_USERNAME }}/${{ env.REPO_NAME }}-springboot:latest
+          images: ghcr.io/${{ env.GITHUB_USERNAME }}/${{ env.REPO_NAME }}-django:latest,ghcr.io/${{ env.GITHUB_USERNAME }}/${{ env.REPO_NAME }}-springboot:latest
