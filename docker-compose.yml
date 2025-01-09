@@ -1,9 +1,9 @@
-version: '3.9'
+version: '3.8'
 
 services:
   django:
-    image: ghcr.io/ob1thecoder/virtualscrollmanagementsystem-django:latest
     build:
+      dockerfile: Dockerfile
       context: ./VirtualScrollSys/auth
     container_name: django-service
     ports:
@@ -21,6 +21,7 @@ services:
   springboot:
     image: ghcr.io/ob1thecoder/virtualscrollmanagementsystem-springboot:latest
     build:
+      dockerfile: Dockerfile
       context: ./VirtualScrollSys/app
     container_name: springboot-service
     ports:
