@@ -19,34 +19,31 @@ services:
     restart: always  
 
   springboot:
-    
-    build:
-      dockerfile: Dockerfile
-      context: ./VirtualScrollSys/app
+    image: ghcr.io/ob1thecoder/virtualscrollmanagementsystem-springboot:latest
     container_name: springboot-service
     ports:
       - "8081:8081"
     environment:
-      DATABASE_URL: jdbc:postgresql://db:5432/virtualscroll
+      DATABASE_URL: postgres://postgres:password@db:5432/virtualscroll
     depends_on:
       - db
     networks:
       - app_network
-    restart: always  
-
+    restart: always
 
   db:
     image: postgres:13
     container_name: postgres-db
     environment:
+      POSTGRES_DB: virtualscroll
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: virtualscroll
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
+    ports:
+      - "5432:5432"
     networks:
       - app_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   nginx:
     image: nginx:latest
@@ -55,7 +52,6 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-
     depends_on:
       - django
       - springboot

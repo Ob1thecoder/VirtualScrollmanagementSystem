@@ -139,8 +139,20 @@ def guest_login_view(request):
 
     if guest_user:
         login(request, guest_user)
-        messages.success(request, "You are now logged in as a guest.")
-        return render(request, 'guest_page.html')  
+        try:
+            response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/popular')
+            if response.status_code == 200:
+                popular_scrolls = response.json()
+            else:
+                popular_scrolls = []
+        except requests.exceptions.RequestException as e:
+            popular_scrolls = []
+            print(f"Error fetching popular scrolls: {e}")
+
+        return render(request, 'guest_page.html', {
+            'user': request.user, 
+            'popular_scrolls': popular_scrolls
+        })
     
     messages.error(request, "Guest login failed.")
     print("Error")

@@ -61,9 +61,22 @@
                 width: 100%;
             }
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content-wrap {
+            flex: 1;
+        }
     </style>
 
     <title>Admin Dashboard</title>
+    
 </head>
 <body>
     <div class="page-container">             
@@ -115,6 +128,9 @@
             </div>
             {% endfor %}
         </div>
+        
     </div>
+
     </div>
+    {% include 'footer.html' %}
 </body>

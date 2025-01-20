@@ -60,10 +60,22 @@
                 width: 100%;
             }
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content-wrap {
+            flex: 1;
+        }
     </style>
     
     
-    <title>User Dashboard</title>
+    
 </head>
 <body>
     <div class="page-container">             
@@ -76,10 +88,10 @@
                 <p class="mb-0">Prepare to embark on a journey of discovery and growth!</p>
                 <p>May your scrolls be ever accessible and your knowledge ever expanding!</p>
             </div>
-        </div> 
-        <!-- New Popular Scrolls Section -->
+
+            <!-- New Popular Scrolls Section -->
         <div class="popular-scrolls mt-4" style="background-color: #343a40; color: #EFF0F2; border-radius: 5px; padding: 20px;">
-            <h3 class="text-center" style="color: #C085FB;">Top 5 Most Popular Scrolls</h3>
+            
             
             <div class="card-container">
                 <h3 class="text-center" style="color: #C085FB; width: 100%;">Top 5 Most Popular Scrolls</h3>
@@ -117,7 +129,12 @@
                 {% endfor %}
             </div>
         </div>
+        </div> 
+        
+        
             
         
     </div>
-</body>
+   
+</body> 
+{% include 'footer.html' %}
