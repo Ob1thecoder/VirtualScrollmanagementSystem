@@ -19,7 +19,9 @@ services:
     restart: always  
 
   springboot:
-    image: ghcr.io/ob1thecoder/virtualscrollmanagementsystem-springboot:latest
+    build:
+      dockerfile: Dockerfile
+      context: ./VirtualScrollSys/app
     container_name: springboot-service
     ports:
       - "8081:8081"
