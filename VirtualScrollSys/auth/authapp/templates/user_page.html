@@ -11,15 +11,15 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-            
-    
-        .popular-scrolls {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .page-container {
+            padding: 25px;
         }
+
         .card-container {
             display: flex;
             flex-wrap: wrap;
             gap: 16px;
+            justify-content: center;
             padding: 16px;
         }
 
@@ -67,7 +67,8 @@
         .page-container {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 120vh;
+            
         }
         .content-wrap {
             flex: 1;
@@ -80,7 +81,8 @@
 <body>
     <div class="page-container">             
         <!-- Page Section -->
-        <div style="padding-left: 25px; margin-right: 25px;">
+        <div style="padding-left: 25px; margin-right: 25px; ">
+            {% if request.user.idKey != 'guest' %}
             <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
                 <h4>Welcome, Scholar <strong style="color: #C085FB; text-transform: capitalize">{{ user.username }}</strong>!</h4>
                 <h6>You are the <strong style="color: #CE83EF; text-transform: capitalize">{{ user.role }}</strong> of Virtual Scroll Access System (VSAS)</h6>
@@ -88,8 +90,19 @@
                 <p class="mb-0">Prepare to embark on a journey of discovery and growth!</p>
                 <p>May your scrolls be ever accessible and your knowledge ever expanding!</p>
             </div>
+            {% else %}
+            <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
+                <h4>Welcome, <strong style="color: #CE83EF;">Curious Mind</strong>!</h4>
+                <h6>You are the <strong style="color: #CE83EF;">Guest User</strong> of Virtual Scroll Access System (VSAS)</h6>
+                <p class="mb-0">The realm of Edstemus beckons! Though your quest for knowledge is endless, the Library of Agility is your sanctuary.</p>
+                <p class="mb-0">The scrolls of wisdom are yours to explore—dive in and uncover the digital wonders that await.</p>
+                <p>With each scroll, new insights arise. Let your curiosity lead the way!</p>
+            </div>
+            {% endif %}
 
-            <!-- New Popular Scrolls Section -->
+        </div>
+
+        <!-- New Popular Scrolls Section -->
         <div class="popular-scrolls mt-4" style="background-color: #343a40; color: #EFF0F2; border-radius: 5px; padding: 20px;">
             
             
@@ -129,12 +142,12 @@
                 {% endfor %}
             </div>
         </div>
-        </div> 
+    </div>
+        
         
         
             
         
     </div>
-   
+   {% include 'footer.html' %}
 </body> 
-{% include 'footer.html' %}

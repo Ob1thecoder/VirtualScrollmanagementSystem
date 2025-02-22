@@ -38,3 +38,23 @@ clean:
 	else \
 		echo "No servers to stop."; \
 	fi
+# Target to stop PostgreSQL service
+stop-postgresql:
+    
+	@sudo service postgresql stop
+
+
+# Target to find and kill the process hosting port 80
+kill-port-80:
+	@echo "Finding process hosting port 80..."
+	@pid=$$(sudo netstat -tlnp | grep ':80 ' | awk '{print $$7}' | cut -d'/' -f1); \
+	if [ -n "$$pid" ]; then \
+		echo "Killing process $$pid hosting port 80..."; \
+		sudo kill $$pid; \
+	else \
+		echo "No process found hosting port 80."; \
+	fi
+
+# Target to reset the environment by stopping PostgreSQL and killing port 80
+reset: stop-postgresql kill-port-80
+	@echo "Environment reset completed."

@@ -68,7 +68,8 @@
         .page-container {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 120vh;
+           
         }
         .content-wrap {
             flex: 1;
@@ -81,7 +82,7 @@
 <body>
     <div class="page-container">             
         <!-- Page Section -->
-        <div style="padding-left: 25px; margin-right: 25px;">
+        <div style="padding-left: 25px; margin-right: 25px; ">
             <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
                 <h4>Welcome, Scholar <strong style="color: #CE83EF; text-transform: capitalize">{{ user.username }}</strong>!</h4>
                 <h6>You are the <strong style="color: #CE83EF; text-transform: capitalize">{{ user.role }}</strong> of Virtual Scroll Access System (VSAS)</h6>
@@ -92,45 +93,47 @@
         </div>
         <div class="popular-scrolls mt-4" style="background-color: #262626; color: #EFF0F2; border-radius: 5px; padding: 20px;">
 
-        <!-- New Popular Scrolls Section -->
-        <div class="card-container">
-            <h3 class="text-center" style="color: #C085FB; width: 100%;">Top 5 Most Popular Scrolls</h3>
-            {% for scroll in popular_scrolls %}
-            <div class="scroll-card">
-                <h5>Title: {{ scroll.title }}</h5>
-                <p><strong>ID:</strong> {{ scroll.id }}</p>
-                <p><strong>Uploader:</strong> {{ scroll.owner }}</p>
-                <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
-                <p><strong>File Type:</strong> {{ scroll.fileType }}</p>
-                <p><strong>Downloads:</strong> {{ scroll.downloadCount }}</p>
-                <div class="scroll-card-actions">
-                    <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
-                        <button type="submit" class="btn btn-warning">
-                            <i class="fa fa-eye"></i> Preview
-                        </button>
-                    </form>
-                    {% if request.user.idKey != 'guest' %}
-                    <form method="GET" action="{% url 'download_scroll' scroll.id %}">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fa fa-download"></i> Download
-                        </button>
-                    </form>
-                    {% endif %}
-                    {% if request.user.role == 'admin' %}
-                    <form method="POST" action="{% url 'delete_scroll' scroll.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fa fa-trash"></i> Delete
-                        </button>
-                    </form>
-                    {% endif %}
+            <!-- New Popular Scrolls Section -->
+            <div class="card-container">
+                <h3 class="text-center" style="color: #C085FB; width: 100%;">Top 5 Most Popular Scrolls</h3>
+                {% for scroll in popular_scrolls %}
+                <div class="scroll-card">
+                    <h5>Title: {{ scroll.title }}</h5>
+                    <p><strong>ID:</strong> {{ scroll.id }}</p>
+                    <p><strong>Uploader:</strong> {{ scroll.owner }}</p>
+                    <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
+                    <p><strong>File Type:</strong> {{ scroll.fileType }}</p>
+                    <p><strong>Downloads:</strong> {{ scroll.downloadCount }}</p>
+                    <div class="scroll-card-actions">
+                        <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fa fa-eye"></i> Preview
+                            </button>
+                        </form>
+                        {% if request.user.idKey != 'guest' %}
+                        <form method="GET" action="{% url 'download_scroll' scroll.id %}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-download"></i> Download
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if request.user.role == 'admin' %}
+                        <form method="POST" action="{% url 'delete_scroll' scroll.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
         
     </div>
-
     </div>
-    {% include 'footer.html' %}
+    
+    
+   
 </body>
+{% include 'footer.html' %}
