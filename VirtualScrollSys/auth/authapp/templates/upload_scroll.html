@@ -18,14 +18,16 @@
     <title>Manage Scrolls</title>
     <style>
         .dropzone {
-            border: 2px dashed #C085FB;
-            border-radius: 10px;
-            background: #f9f3f3;
-            color: #EFF0F2;
+            border: 2px dashed #ebe7ef;
+            border-radius: 20px;
+            background: #3d1d6c;
+            color: #fff4f4;
             padding: 20px;
-            text-align: center;
+            text-align: left;
             font-size: 18px;
+            text-decoration: solid;
         }
+        
     </style>
 </head>
 <body>
@@ -40,12 +42,12 @@
 
             <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">Upload a New Scroll</h3>
 
-            <div class="container" style="margin-left: 10px; color: #e7e1e1;">
+            <div class="container" style="margin-left: 0px; color: #676779;">
                 <form action="/upload/" method="POST" class="dropzone" id="scrollDropzone" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group mb-3">
                         <label for="title" class="mb-1">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title" maxlength="255" required style="background-color: #060606; color: #0a0a0a">
+                        <input type="text" class="form-control" id="title" name="title" maxlength="255" required style="background-color: #1d1c1c; color: #f3f3fd">
                     </div>
                 </form>
                 <button type="submit" id="submit-all" class="btn btn-primary mt-3"><i class="fa fa-upload" style="font-size:16px;"></i> Upload</button>

@@ -398,13 +398,13 @@ def preview_scroll_page(request, id):
             return HttpResponse("File content is empty.", status=400)
 
         # Handle the content based on the file type
-        if file_type in ["jpg", "png"]:
+        if file_type in ["jpg", "png", "jpeg"]:
             # Pass Base64 data directly for images
             return render(request, 'preview_scroll.html', {
                 'image_data': file_content, 
                 'file_type': file_type
             })
-        elif file_type == "pdf":
+        elif file_type == "pdf" or file_type == "docx":
             # Pass Base64 data directly for PDFs
             return render(request, 'preview_scroll.html', {
                 'pdf_data': file_content, 
