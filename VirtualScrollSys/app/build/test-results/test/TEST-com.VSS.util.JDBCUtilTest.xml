@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.VSS.util.JDBCUtilTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2024-12-29T17:14:52" hostname="LAPTOP-RG87O12C" time="0.397">
+<testsuite name="com.VSS.util.JDBCUtilTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-03-06T00:56:04" hostname="LAPTOP-RG87O12C" time="0.348">
   <properties/>
-  <testcase name="testConnectionToDatabase()" classname="com.VSS.util.JDBCUtilTest" time="0.381"/>
-  <testcase name="testCloseConnectionOpen()" classname="com.VSS.util.JDBCUtilTest" time="0.003"/>
-  <testcase name="testCloseConnectionError()" classname="com.VSS.util.JDBCUtilTest" time="0.009"/>
+  <testcase name="testConnectionToDatabase()" classname="com.VSS.util.JDBCUtilTest" time="0.332"/>
+  <testcase name="testCloseConnectionOpen()" classname="com.VSS.util.JDBCUtilTest" time="0.002"/>
+  <testcase name="testCloseConnectionError()" classname="com.VSS.util.JDBCUtilTest" time="0.011"/>
   <testcase name="testCloseConnectionAlreadyClosed()" classname="com.VSS.util.JDBCUtilTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[java.sql.SQLException: Error closing connection

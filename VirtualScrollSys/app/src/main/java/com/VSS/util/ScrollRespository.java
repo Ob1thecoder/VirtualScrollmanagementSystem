@@ -103,6 +103,19 @@ public class ScrollRespository {
         
         return jdbcTemplate.query(sql.toString(), params.toArray(), scrollRowMapper);
     }
+    public int addFavourite(Long userId, Long scrollId) {
+        String sql = "INSERT INTO likes (user_id, scroll_id, liked_at) VALUES (?, ?, NOW())";
+        return jdbcTemplate.update(sql, userId, scrollId);
+    }
+
+    public List<Scroll> getLikesByUserId(Long userId) {
+        String sql = "SELECT s.* FROM scrolls s JOIN likes f ON s.id = f.scroll_id WHERE f.user_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, scrollRowMapper);
+    }
+    public int removeFavourite(Long userId, Long scrollId) {
+        String sql = "DELETE FROM likes WHERE user_id = ? AND scroll_id = ?";
+        return jdbcTemplate.update(sql, userId, scrollId);
+    }
 
     // RowMapper to map ResultSet rows to Scroll objects
     private RowMapper<Scroll> scrollRowMapper = (ResultSet rs, int rowNum) -> {

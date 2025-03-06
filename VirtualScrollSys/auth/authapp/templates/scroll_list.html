@@ -15,6 +15,11 @@
         /* General Styles */
         .page-container {
             padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Card View */
@@ -24,7 +29,17 @@
             gap: 16px;
             padding: 16px;
         }
+        .btn-secondary {
+            background-color: gray;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
+        .btn-primary {
+            background-color: blue;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
         .scroll-card {
             background-color: #222024;
             color: #EFF0F2;
@@ -155,6 +170,11 @@
                         </button>
                     </form>
                     {% endif %}
+                    {% if request.user.idKey != 'guest' %}
+                    <button class="btn {% if scroll.id in liked_scrolls %}btn-primary{% else %}btn-secondary{% endif %} like-button" data-liked="{% if scroll.id in liked_scrolls %}true{% else %}false{% endif %}" onclick="toggleLike({{ scroll.id }}, {{ request.user.id }}, this)">
+                        <i class="fa fa-star"></i> {% if scroll.id in liked_scrolls %}Unlike{% else %}Like{% endif %}
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -204,6 +224,11 @@
                                     </button>
                                 </form>
                                 {% endif %}
+                                {% if request.user.idKey != 'guest' %}
+                                <button class="btn {% if scroll.id in liked_scrolls %}btn-primary{% else %}btn-secondary{% endif %} like-button" data-liked="{% if scroll.id in liked_scrolls %}true{% else %}false{% endif %}" onclick="toggleLike({{ scroll.id }}, {{ request.user.id }}, this)">
+                                    <i class="fa fa-star"></i> {% if scroll.id in liked_scrolls %}Unlike{% else %}Like{% endif %}
+                                </button>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -211,11 +236,11 @@
                 </tbody>
             </table>
             {% else %}
-            <p>No scrolls found.</p>
+            <p>No scrolls found. Upload your first scroll!</p>
             {% endif %}
         </div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const toggleButton = document.getElementById('toggleViewButton');
         const tableContainer = document.querySelector('.table-container');
@@ -232,6 +257,37 @@
                 toggleButton.innerHTML = '<i class="fa fa-th"></i> Toggle to Card View';
             }
         });
+
+        function toggleLike(scrollId, userId, button) {
+            const isLiked = button.getAttribute('data-liked') === 'true';
+            const url = isLiked ? `/unlike_scroll/${scrollId}/${userId}/` : `/like_scroll/${scrollId}/${userId}/`;
+            const method = 'POST';
+
+            $.ajax({
+                url: url,
+                type: method,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    // Update the button appearance
+                    if (isLiked) {
+                        button.classList.remove('btn-primary');
+                        button.classList.add('btn-secondary');
+                        button.setAttribute('data-liked', 'false');
+                        button.innerHTML = '<i class="fa fa-star"></i> Like';
+                    } else {
+                        button.classList.remove('btn-secondary');
+                        button.classList.add('btn-primary');
+                        button.setAttribute('data-liked', 'true');
+                        button.innerHTML = '<i class="fa fa-star"></i> Unlike';
+                    }
+                },
+                error: function(response) {
+                    alert(response.responseJSON.message);
+                }
+            });
+        }
     </script>
 </body>
 {% include 'footer.html' %}

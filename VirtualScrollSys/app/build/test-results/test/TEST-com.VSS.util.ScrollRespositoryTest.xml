@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.VSS.util.ScrollRespositoryTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2024-12-29T17:14:52" hostname="LAPTOP-RG87O12C" time="0.935">
+<testsuite name="com.VSS.util.ScrollRespositoryTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2025-03-06T00:56:04" hostname="LAPTOP-RG87O12C" time="0.681">
   <properties/>
-  <testcase name="testFindAll()" classname="com.VSS.util.ScrollRespositoryTest" time="0.507"/>
-  <testcase name="testSearchWithEmptyOwner()" classname="com.VSS.util.ScrollRespositoryTest" time="0.003"/>
-  <testcase name="testSearchWithEmptyTitle()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
+  <testcase name="testFindAll()" classname="com.VSS.util.ScrollRespositoryTest" time="0.342"/>
+  <testcase name="testSearchWithEmptyOwner()" classname="com.VSS.util.ScrollRespositoryTest" time="0.004"/>
+  <testcase name="testSearchWithEmptyTitle()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
   <testcase name="testIncrementDownloadCount()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
-  <testcase name="testScrollRowMapperDirectly()" classname="com.VSS.util.ScrollRespositoryTest" time="0.394"/>
-  <testcase name="testSearchByOwner()" classname="com.VSS.util.ScrollRespositoryTest" time="0.003"/>
-  <testcase name="testSearchNoParameters()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
+  <testcase name="testScrollRowMapperDirectly()" classname="com.VSS.util.ScrollRespositoryTest" time="0.308"/>
+  <testcase name="testSearchByOwner()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
+  <testcase name="testSearchNoParameters()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
   <testcase name="testIncrementUploadCount()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
   <testcase name="testUpdateScroll()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
-  <testcase name="testFindScrollByIdNotFound()" classname="com.VSS.util.ScrollRespositoryTest" time="0.003"/>
-  <testcase name="testSearchScrolls()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
+  <testcase name="testFindScrollByIdNotFound()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
+  <testcase name="testSearchScrolls()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
   <testcase name="testFindScrollsByOwner()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
   <testcase name="testSearchWithEmptyUploadedAt()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
   <testcase name="testDeleteScrollById()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
-  <testcase name="testFindScrollById()" classname="com.VSS.util.ScrollRespositoryTest" time="0.001"/>
+  <testcase name="testFindScrollById()" classname="com.VSS.util.ScrollRespositoryTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

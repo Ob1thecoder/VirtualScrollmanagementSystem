@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.VSS.model.UserTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2024-12-29T17:14:51" hostname="LAPTOP-RG87O12C" time="0.02">
+<testsuite name="com.VSS.model.UserTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2025-03-06T00:56:04" hostname="LAPTOP-RG87O12C" time="0.014">
   <properties/>
   <testcase name="testSetAndGetRole()" classname="com.VSS.model.UserTest" time="0.001"/>
-  <testcase name="testSetAndGetEmail()" classname="com.VSS.model.UserTest" time="0.0"/>
+  <testcase name="testSetAndGetEmail()" classname="com.VSS.model.UserTest" time="0.001"/>
   <testcase name="testSetAndGetIDkey()" classname="com.VSS.model.UserTest" time="0.0"/>
-  <testcase name="testSetAndGetPhone()" classname="com.VSS.model.UserTest" time="0.001"/>
-  <testcase name="testSetAndGetUsername()" classname="com.VSS.model.UserTest" time="0.0"/>
-  <testcase name="testSetAndGetId()" classname="com.VSS.model.UserTest" time="0.004"/>
+  <testcase name="testSetAndGetPhone()" classname="com.VSS.model.UserTest" time="0.0"/>
+  <testcase name="testSetAndGetUsername()" classname="com.VSS.model.UserTest" time="0.001"/>
+  <testcase name="testSetAndGetId()" classname="com.VSS.model.UserTest" time="0.0"/>
   <testcase name="testGenerateRandomPassword_Uniqueness()" classname="com.VSS.model.UserTest" time="0.002"/>
   <testcase name="testGenerateRandomPassword_Content()" classname="com.VSS.model.UserTest" time="0.001"/>
   <testcase name="testSetAndGetFullname()" classname="com.VSS.model.UserTest" time="0.001"/>
   <testcase name="testGenerateRandomPassword_Length()" classname="com.VSS.model.UserTest" time="0.001"/>
-  <testcase name="testConstructor()" classname="com.VSS.model.UserTest" time="0.0"/>
+  <testcase name="testConstructor()" classname="com.VSS.model.UserTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

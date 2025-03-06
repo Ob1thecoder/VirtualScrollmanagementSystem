@@ -189,6 +189,39 @@ public ResponseEntity<Map<String, Object>> previewScroll(@PathVariable Long id) 
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)  
                 .body(new ByteArrayResource(scroll.getFile()));
     }
+
+    @PostMapping("/like")
+    public ResponseEntity<String> likeScroll(
+            @RequestParam("userId") Long userId,
+            @RequestParam("scrollId") Long scrollId) {
+        try {
+            scrollService.addFavourite(userId, scrollId);
+            return new ResponseEntity<>("Scroll liked successfully.", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error liking scroll: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/likes")
+    public ResponseEntity<List<Scroll>> getLikesByUserId(@RequestParam("userId") Long userId) {
+        try {
+            List<Scroll> likedScrolls = scrollService.getLikesByUserId(userId);
+            return new ResponseEntity<>(likedScrolls, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PostMapping("/unlike")
+    public ResponseEntity<String> unlikeScroll(
+            @RequestParam("userId") Long userId,
+            @RequestParam("scrollId") Long scrollId) {
+        try {
+            scrollService.removeFavourite(userId, scrollId);
+            return new ResponseEntity<>("Scroll unliked successfully.", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error unliking scroll: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     
 
     

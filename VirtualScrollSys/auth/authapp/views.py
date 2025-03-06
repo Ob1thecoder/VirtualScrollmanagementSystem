@@ -303,35 +303,39 @@ def upload_scroll(request):
 
 @login_required
 def list_scrolls(request):
+    user_id = request.user.id
     # Get search parameters from the request
     owner = request.GET.get('owner')
     scroll_id = request.GET.get('id')
     title = request.GET.get('title')
     uploaded_at = request.GET.get('uploadedAt')
-    fileType = request.GET.get("fileType")
 
     params = {
         'owner': owner,
         'id': scroll_id,
         'title': title,
         'uploadedAt': uploaded_at
-        
     }
-    try:
-        response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/list')
 
-        if response.status_code == 200:
-            scrolls = response.json()  
+    try:
+        response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/list', params=params)
+        likes_response = requests.get(f"{SPRING_BOOT_API_URL_S}/scrolls/likes", params={'userId': user_id})
+
+        if response.status_code == 200 and likes_response.status_code == 200:
+            scrolls = response.json()
+            liked_scrolls = [like['id'] for like in likes_response.json()]
         else:
-            scrolls = []  
-            print(f"Failed to fetch scrolls. Status code: {response.status_code}")
+            scrolls = []
+            liked_scrolls = []
+            print(f"Failed to fetch scrolls or likes. Status code: {response.status_code}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to the Spring Boot API: {e}")
         scrolls = []
+        liked_scrolls = []
 
-    # Render the scroll_list.html template, passing the scrolls to the template
-    return render(request, 'scroll_list.html', {'scrolls': scrolls})
+    # Render the scroll_list.html template, passing the scrolls and liked_scrolls to the template
+    return render(request, 'scroll_list.html', {'scrolls': scrolls, 'liked_scrolls': liked_scrolls})
 
 def search_scrolls(request):
     # Get search parameters from the request
@@ -437,8 +441,56 @@ def delete_scroll(request, scroll_id):
     return redirect('your_scrolls')
 
 
+@login_required
+def like_scroll(request, scroll_id, user_id):
+    next_page = request.GET.get('next', 'your_scrolls')
+    if request.method == 'POST':
+        try:
+            response = requests.post(f"{SPRING_BOOT_API_URL_S}/scrolls/like", data={'userId': user_id, 'scrollId': scroll_id})
+            if response.status_code == 200:
+                return redirect(next_page)
+            else:
+                return JsonResponse({'message': f'Error liking scroll: {response.status_code}'}, status=response.status_code)
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'message': f'Error liking scroll: {str(e)}'}, status=500)
+    return JsonResponse({'message': 'Invalid request method.'}, status=400)
 
+@login_required
+def unlike_scroll(request, scroll_id, user_id):
+    next_page = request.GET.get('next', 'your_scrolls')
+    if request.method == 'POST':
+        try:
+            response = requests.post(f"{SPRING_BOOT_API_URL_S}/scrolls/unlike", data={'userId': user_id, 'scrollId': scroll_id})
+            if response.status_code == 200:
+                return redirect(next_page)
+            else:
+                return JsonResponse({'message': f'Error unliking scroll: {response.status_code}'}, status=response.status_code)
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'message': f'Error unliking scroll: {str(e)}'}, status=500)
+    return JsonResponse({'message': 'Invalid request method.'}, status=400)
 
+@login_required
+def get_likes_by_user(request, user_id):
+    try:
+        response = requests.get(f"{SPRING_BOOT_API_URL_S}/scrolls/likes", params={'userId': user_id})
+        if response.status_code == 200:
+            liked_scrolls = response.json()
+            return render(request, 'liked_scrolls.html', {'liked_scrolls': liked_scrolls})
+        else:
+            return JsonResponse({'message': f'Error fetching likes: {response.status_code}'}, status=response.status_code)
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'message': f'Error fetching likes: {str(e)}'}, status=500)
+@login_required
+def liked_scrolls(request, user_id):
+    try:
+        response = requests.get(f"{SPRING_BOOT_API_URL_S}/scrolls/likes", params={'userId': user_id})
+        if response.status_code == 200:
+            liked_scrolls = response.json()
+            return render(request, 'liked_scrolls.html', {'liked_scrolls': liked_scrolls})
+        else:
+            return JsonResponse({'message': f'Error fetching likes: {response.status_code}'}, status=response.status_code)
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'message': f'Error fetching likes: {str(e)}'}, status=500)    
 def your_scrolls(request):
     try:
         username = request.user.username

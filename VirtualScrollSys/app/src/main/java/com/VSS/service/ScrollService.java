@@ -81,12 +81,23 @@ public class ScrollService {
     public void incrementDownloadCount(Long id) {
         scrollRepository.incrementDownloadCount(id);  
     }
-    
+
+    public void addFavourite(Long id, Long scrollId) {
+        scrollRepository.addFavourite(id, scrollId);
+    }
+    public void removeFavourite(Long id, Long scrollId) {
+        scrollRepository.removeFavourite(id, scrollId);
+    }
     
 
     public List<Scroll> getScrollsByOwner(String owner) {
         return scrollRepository.findScrollsByOwner(owner);
     }
+
+    public List<Scroll> getLikesByUserId(Long userId) {
+        return scrollRepository.getLikesByUserId(userId);
+    }
+    
 
     // Get scroll by ID
     public Scroll getScrollById(Long id) {

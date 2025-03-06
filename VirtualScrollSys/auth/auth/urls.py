@@ -19,8 +19,8 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from authapp.views import LoginAPIView, RegisterAPIView, add_user, ban_user, change_password, \
-    delete_scroll, delete_user, download_scroll, edit_profile, edit_scroll_file, \
-        list_scrolls, preview_scroll_page, search_scrolls, upload_scroll,user_info, get_admin_info, \
+    delete_scroll, delete_user, download_scroll, edit_profile, edit_scroll_file, get_likes_by_user, like_scroll, liked_scrolls, \
+        list_scrolls, preview_scroll_page, search_scrolls, unlike_scroll, upload_scroll,user_info, get_admin_info, \
             guest_login_view, guest_page, login_view, admin_page, user_list, user_page, logout_view,unban_user, LogoutAPIView,register, your_scrolls
 from django.views.generic import RedirectView
 
@@ -53,7 +53,11 @@ urlpatterns = [
     path('your-scrolls/', your_scrolls, name='your_scrolls'),
     path('scrolls/download/<int:scroll_id>/', download_scroll, name='download_scroll'),
     path('scrolls/edit/<int:id>/', edit_scroll_file, name='edit_scroll'),
-
+    path('like_scroll/<int:scroll_id>/<int:user_id>/', like_scroll, name='like_scroll'),
+    path('unlike_scroll/<int:scroll_id>/<int:user_id>/', unlike_scroll, name='unlike_scroll'),
+    path('get_likes_by_user/<int:user_id>/', get_likes_by_user, name='get_likes_by_user'),
+    path('liked_scrolls/<int:user_id>/', liked_scrolls, name='liked_scrolls'),
     path('guest-page/', guest_page, name='guest_page')
+    
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

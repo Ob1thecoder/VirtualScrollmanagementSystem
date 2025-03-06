@@ -172,6 +172,9 @@
                             <li><a class="dropdown-item" href="{% url 'scroll_list' %}" style="color: #EFF0F2;">Scroll List</a></li>
                             <li><a class="dropdown-item" href="{% url 'upload_scroll' %}" style="color: #EFF0F2;">Add Scroll</a></li> 
                             <li><a class="dropdown-item" href="{% url 'your_scrolls' %}" style="color: #EFF0F2;">Your Scroll</a></li>
+                            <li >
+                                <a class="dropdown-item" href="{% url 'liked_scrolls' request.user.id %}" style="color: #EFF0F2;">Liked Scrolls</a>
+                            </li>
                         </ul>
                     </li>                
                 {% endif %}
@@ -211,6 +214,7 @@
                 <div class="dropdown-container">
                     <a href="{% url 'upload_scroll' %}">Upload Scroll</a>
                     <a href="{% url 'your_scrolls' %}">Your Scrolls</a>
+                    <a href="{% url 'liked_scrolls' request.user.id %}">Your Favourites</a>
                 </div>
                 <!-- <a href="{% url 'upload_scroll' %}">Upload Scroll</a>
                 <a href="{% url 'your_scrolls' %}">Your Scrolls</a>          -->
