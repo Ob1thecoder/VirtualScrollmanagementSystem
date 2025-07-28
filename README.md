@@ -49,7 +49,7 @@ This application follows a microservices architecture pattern:
 - **Java 11+** (for local development)
 - **PostgreSQL** (for local development)
 
-### Option 1: Docker Deployment (Recommended)
+### Docker Deployment 
 
 1. **Clone the repository**
    ```bash
@@ -67,45 +67,9 @@ This application follows a microservices architecture pattern:
    - Django admin: http://localhost/admin
    - API documentation: http://localhost/api
 
-### Option 2: Local Development
 
-1. **Set up Django (Frontend)**
-   ```bash
-   cd VirtualScrollSys/auth
-   pip install -r requirement.txt
-   python manage.py migrate
-   python manage.py runserver 8000
-   ```
 
-2. **Set up Spring Boot (Backend)**
-   ```bash
-   cd VirtualScrollSys/app
-   ./gradlew bootRun
-   ```
-
-3. **Set up Database**
-   ```bash
-   # Install PostgreSQL and create database
-   createdb virtualscroll
-   ```
-
-### Option 3: Using Makefile
-
-```bash
-# Start all services
-make run-all
-
-# Start only Django
-make run-django
-
-# Start only Spring Boot
-make run-springboot
-
-# Stop all services
-make clean
-```
-
-## 🛠️ Technology Stack
+## Tech Stack
 
 ### Frontend
 - **Django 5.2.4**: Web framework for rapid development
@@ -132,90 +96,15 @@ make clean
 - **VS Code**: Recommended IDE
 - **Postman**: API testing
 
-## 📂 Project Structure
 
-```
-VirtualScrollmanagementSystem/
-├── docker-compose.yml          # Multi-container Docker configuration
-├── nginx.conf                  # Nginx reverse proxy configuration
-├── Makefile                   # Build and deployment automation
-├── README.md                  # Project documentation
-│
-├── VirtualScrollSys/
-│   ├── auth/                  # Django Frontend Application
-│   │   ├── manage.py          # Django management script
-│   │   ├── requirement.txt    # Python dependencies
-│   │   ├── Dockerfile         # Django container configuration
-│   │   ├── auth/              # Django project settings
-│   │   │   ├── settings.py    # Application configuration
-│   │   │   ├── urls.py        # URL routing
-│   │   │   └── wsgi.py        # WSGI configuration
-│   │   └── authapp/           # Main Django application
-│   │       ├── models.py      # Database models
-│   │       ├── views.py       # Application logic
-│   │       ├── forms.py       # Web forms
-│   │       ├── urls.py        # App-specific URLs
-│   │       └── templates/     # HTML templates
-│   │
-│   └── app/                   # Spring Boot Backend API
-│       ├── build.gradle       # Gradle build configuration
-│       ├── Dockerfile         # Spring Boot container
-│       └── src/               # Java source code
-│           └── main/
-│               ├── java/      # Application logic
-│               └── resources/ # Configuration files
-```
 
-## 🔧 Configuration
 
-### Environment Variables
 
-Create a `.env` file in the root directory:
 
-```env
-# Database Configuration
-DATABASE_URL=postgres://postgres:password@db:5432/virtualscroll
-POSTGRES_DB=virtualscroll
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=password
 
-# Django Configuration
-DJANGO_SECRET_KEY=your-secret-key-here
-DJANGO_DEBUG=False
-DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,your-domain.com
 
-# Spring Boot Configuration
-SPRING_BOOT_API_URL=http://springboot-service:8081/api
-```
 
-### Database Setup
 
-The application supports both SQLite (development) and PostgreSQL (production):
-
-```bash
-# Run migrations
-python manage.py migrate
-
-# Create superuser
-python manage.py createsuperuser
-
-# Load sample data (optional)
-python manage.py loaddata sample_data.json
-```
-
-## 🧪 Testing
-
-```bash
-# Run Django tests
-cd VirtualScrollSys/auth
-python manage.py test
-
-# Run Spring Boot tests
-cd VirtualScrollSys/app
-./gradlew test
-```
-
-## 📖 API Documentation
 
 ### Authentication Endpoints
 - `POST /api/login/` - User login
@@ -234,9 +123,9 @@ cd VirtualScrollSys/app
 - `POST /api/users/ban/{id}/` - Ban user (admin only)
 - `POST /api/users/unban/{id}/` - Unban user (admin only)
 
-## 🚀 Deployment
 
-### Docker Deployment
+
+## Deployment
 
 ```bash
 # Build and deploy
@@ -245,52 +134,12 @@ docker-compose up --build -d
 # View logs
 docker-compose logs -f
 
-# Scale services
-docker-compose up --scale django=2 --scale springboot=2
+
 ```
 
-### AWS Deployment
 
-The application is configured for AWS Elastic Beanstalk deployment using `Dockerrun.aws.json`.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📋 Roadmap
-
-- [ ] Real-time notifications
-- [ ] Advanced search and filtering
-- [ ] File format support (PDF, DOCX)
-- [ ] Social sharing features
-- [ ] Mobile application
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support
-
-## 🐛 Known Issues
-
-- File upload size limited to 100MB
-- Guest users have limited functionality
-- Search functionality is basic (no advanced filters)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Authors
 
 - **Developer** - [@Ob1thecoder](https://github.com/Ob1thecoder)
 
-## 🙏 Acknowledgments
 
-- Django and Spring Boot communities for excellent documentation
-- AWS for cloud hosting capabilities
-- All contributors and testers
 
----
-
-**Note**: This is an educational project designed to demonstrate full-stack development principles and is not intended for production use without proper security auditing and performance optimization.
