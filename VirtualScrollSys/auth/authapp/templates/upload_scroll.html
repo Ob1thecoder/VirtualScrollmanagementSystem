@@ -15,58 +15,629 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
     
-    <title>Manage Scrolls</title>
+    <title>Upload Scroll - Virtual Scroll System</title>
     <style>
-        .dropzone {
-            border: 2px dashed #ebe7ef;
-            border-radius: 20px;
-            background: #5f497f;
-            color: #fff4f4;
-            padding: 20px;
-            text-align: left;
-            font-size: 18px;
-            text-decoration: solid;
+        /* Enhanced Upload Page Styles */
+        .page-container {
+            padding: 25px;
+            min-height: calc(100vh - 200px);
         }
-        
+
+        .upload-welcome {
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
+            border: 1px solid #444;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-welcome::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(192, 133, 251, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-welcome:hover::before {
+            left: 100%;
+        }
+
+        .upload-container {
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #444;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .enhanced-dropzone {
+            border: 3px dashed #803bb1;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(95, 73, 127, 0.1) 0%, rgba(109, 47, 171, 0.1) 100%);
+            color: #EFF0F2;
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .enhanced-dropzone:hover {
+            border-color: #9c5bcc;
+            background: linear-gradient(135deg, rgba(95, 73, 127, 0.2) 0%, rgba(109, 47, 171, 0.2) 100%);
+            transform: scale(1.02);
+        }
+
+        .enhanced-dropzone.dz-drag-hover {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.2) 100%);
+            transform: scale(1.05);
+        }
+
+        .dropzone-content {
+            pointer-events: none;
+        }
+
+        .dropzone-icon {
+            font-size: 4rem;
+            color: #803bb1;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .dropzone-text h3 {
+            color: #EFF0F2;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .dropzone-text p {
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .file-types {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .file-type-badge {
+            background: rgba(128, 59, 177, 0.2);
+            color: #C085FB;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(128, 59, 177, 0.3);
+        }
+
+        .form-control-enhanced {
+            background: rgba(38, 38, 38, 0.8);
+            border: 2px solid #444;
+            color: #EFF0F2;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .form-control-enhanced:focus {
+            background: rgba(42, 37, 48, 0.9);
+            border-color: #803bb1;
+            box-shadow: 0 0 0 0.2rem rgba(128, 59, 177, 0.25);
+            color: #EFF0F2;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(128, 59, 177, 0.4);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .upload-progress {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-bar-custom {
+            background: linear-gradient(90deg, #803bb1 0%, #6d2fab 100%);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .file-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(19, 19, 19, 0.5);
+            border-radius: 8px;
+            border: 1px solid #333;
+            display: none;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #EFF0F2;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            color: #ffc107;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .remove-file:hover {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff6b6b;
+        }
+
+        .upload-tips {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #EFF0F2;
+        }
+
+        .upload-tips h5 {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .upload-tips ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .upload-tips li {
+            margin-bottom: 5px;
+            color: #bbb;
+        }
+
+        /* Animation for success state */
+        .upload-success {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+            animation: bounceIn 0.6s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 15px;
+            }
+            
+            .enhanced-dropzone {
+                padding: 30px 15px;
+                min-height: 150px;
+            }
+            
+            .dropzone-icon {
+                font-size: 3rem;
+            }
+            
+            .file-types {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="page-container">             
         <div style="padding-left: 25px; margin-right: 25px;">
-            <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
-                <h4>Hello, Whiskers <strong style="color: #C085FB; text-transform: capitalize">{{ user.username }}</strong>!</h4>
-                <p class="mb-0">You are about to add a <span style="color: #C085FB;"> new scroll</span> to the Library of Agility! The ancient archives eagerly await this digital trove of knowledge.</p>
-                <p class="mb-0">With each scroll, the realm of Edstemus expands, and so too does the power of our scholars.</p>
-                <p>Remember, each scroll holds the key to unlocking new realms of discovery and progress. Proceed with honor!</p>
+            <!-- Enhanced Welcome Section -->
+            <div class="alert upload-welcome mt-3 p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fa fa-magic me-3" style="font-size: 2rem; color: #C085FB;"></i>
+                    <div>
+                        <h4 style="color: #EFF0F2; margin: 0;">Welcome, <strong style="color: #C085FB; text-transform: capitalize">{{ user.username }}</strong>!</h4>
+                        <p style="margin: 0; color: #bbb;">Ready to add knowledge to the Digital Archive</p>
+                    </div>
+                </div>
+                <div style="color: #EFF0F2;">
+                    <p class="mb-2">🚀 You are about to add a <span style="color: #C085FB; font-weight: 600;">new scroll</span> to the Library of Agility!</p>
+                    <p class="mb-2">📚 The ancient archives eagerly await this digital trove of knowledge.</p>
+                    <p class="mb-0">✨ With each scroll, the realm of Edstemus expands, and so too does the power of our scholars.</p>
+                </div>
             </div>
 
-            <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">Upload a New Scroll</h3>
+            <!-- Upload Section -->
+            <div class="upload-container">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="fa fa-cloud-upload me-3" style="font-size: 1.5rem; color: #803bb1;"></i>
+                    <h3 style="color: #EFF0F2; margin: 0;">Upload a New Scroll</h3>
+                </div>
 
-            <div class="container" style="margin-left: 0px; color: #676779;">
-                <form action="/upload/" method="POST" class="dropzone" id="scrollDropzone" enctype="multipart/form-data">
+                <!-- Title Input -->
+                <div class="mb-4">
+                    <label for="title" class="form-label" style="color: #bbb; font-weight: 500;">
+                        <i class="fa fa-file-text-o me-2"></i>Scroll Title *
+                    </label>
+                    <input type="text" 
+                           class="form-control form-control-enhanced" 
+                           id="title" 
+                           name="title" 
+                           maxlength="255" 
+                           placeholder="Enter a descriptive title for your scroll"
+                           required>
+                    <small class="text-muted">Choose a clear, descriptive title that others can easily understand</small>
+                </div>
+
+                <!-- Enhanced Dropzone -->
+                <form action="/upload/" method="POST" class="enhanced-dropzone" id="scrollDropzone" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="title" class="mb-1">Title:</label>
-                        <input type="text" class="form-control" id="title" name="title" maxlength="255" required style="background-color: #1d1c1c; color: #f3f3fd">
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                            <i class="fa fa-cloud-upload"></i>
+                        </div>
+                        <div class="dropzone-text">
+                            <h3>Drag & Drop Your Scroll</h3>
+                            <p>or <strong style="color: #803bb1;">click here</strong> to browse files</p>
+                            <p class="small text-muted">Maximum file size: 10MB</p>
+                        </div>
+                        <div class="file-types">
+                            <span class="file-type-badge">PDF</span>
+                            <span class="file-type-badge">DOC</span>
+                            <span class="file-type-badge">DOCX</span>
+                            <span class="file-type-badge">TXT</span>
+                        </div>
                     </div>
                 </form>
-                <button type="submit" id="submit-all" class="btn btn-primary mt-3"><i class="fa fa-upload" style="font-size:16px;"></i> Upload</button>
+
+                <!-- File Preview -->
+                <div class="file-preview" id="filePreview">
+                    <div class="file-info">
+                        <div class="file-details">
+                            <i class="fa fa-file file-icon" id="fileIcon"></i>
+                            <div>
+                                <div id="fileName" style="font-weight: 600;"></div>
+                                <div id="fileSize" class="small text-muted"></div>
+                            </div>
+                        </div>
+                        <button type="button" class="remove-file" id="removeFile" title="Remove file">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload Progress -->
+                <div class="upload-progress" id="uploadProgress">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span style="color: #EFF0F2;">Uploading...</span>
+                        <span id="progressPercent" style="color: #803bb1; font-weight: 600;">0%</span>
+                    </div>
+                    <div class="progress" style="height: 8px; background: rgba(255,255,255,0.1);">
+                        <div class="progress-bar progress-bar-custom" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Upload Button -->
+                <div class="text-center mt-4">
+                    <button type="button" id="uploadBtn" class="btn upload-btn" disabled>
+                        <i class="fa fa-upload me-2"></i>Upload Scroll
+                    </button>
+                </div>
+
+                <!-- Success State -->
+                <div class="upload-success" id="uploadSuccess">
+                    <div class="success-icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <h4 style="color: #28a745; margin-bottom: 15px;">Upload Successful!</h4>
+                    <p style="color: #EFF0F2;">Your scroll has been added to the library.</p>
+                    <div class="mt-3">
+                        <a href="{% url 'your_scrolls' %}" class="btn btn-primary me-2">
+                            <i class="fa fa-list me-2"></i>View Your Scrolls
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" id="uploadAnother">
+                            <i class="fa fa-plus me-2"></i>Upload Another
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload Tips -->
+                <div class="upload-tips">
+                    <h5><i class="fa fa-lightbulb-o me-2"></i>Upload Tips</h5>
+                    <ul>
+                        <li>Use clear, descriptive titles for better discoverability</li>
+                        <li>Ensure your file is in an accepted format (PDF, DOC, DOCX, TXT)</li>
+                        <li>Files should not exceed 10MB in size</li>
+                        <li>Consider the content quality and relevance to other users</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        let myDropzone;
+        let selectedFile = null;
+        const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+        const acceptedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+
+        // Initialize Enhanced Dropzone
         Dropzone.options.scrollDropzone = {
             autoProcessQueue: false,
+            uploadMultiple: false,
+            maxFiles: 1,
             paramName: "file",
-            maxFilesize: 10, 
-            acceptedFiles: ".pdf,.doc,.docx,.txt", 
+            maxFilesize: 10,
+            acceptedFiles: ".pdf,.doc,.docx,.txt",
+            addRemoveLinks: false,
+            createImageThumbnails: false,
+            previewTemplate: '<div style="display:none;"></div>',
+            
             init: function () {
-                let myDropzone = this;
-                document.getElementById("submit-all").addEventListener("click", function () {
-                    myDropzone.processQueue();
+                myDropzone = this;
+                
+                // Handle file selection
+                this.on("addedfile", function(file) {
+                    if (selectedFile) {
+                        this.removeFile(selectedFile);
+                    }
+                    
+                    selectedFile = file;
+                    showFilePreview(file);
+                    updateUploadButton();
                 });
+
+                this.on("removedfile", function(file) {
+                    if (file === selectedFile) {
+                        selectedFile = null;
+                        hideFilePreview();
+                        updateUploadButton();
+                    }
+                });
+
+                this.on("error", function(file, errorMessage) {
+                    showError(errorMessage);
+                    this.removeFile(file);
+                });
+
+                // Upload progress
+                this.on("uploadprogress", function(file, progress) {
+                    updateProgress(progress);
+                });
+
+                this.on("success", function(file, response) {
+                    showSuccess();
+                });
+
+                this.on("complete", function() {
+                    hideProgress();
+                });
+            },
+
+            accept: function(file, done) {
+                // Validate file type
+                if (!acceptedTypes.includes(file.type)) {
+                    done("Invalid file type. Please upload PDF, DOC, DOCX, or TXT files only.");
+                    return;
+                }
+
+                // Validate file size
+                if (file.size > maxFileSize) {
+                    done("File is too large. Maximum size is 10MB.");
+                    return;
+                }
+
+                done();
             }
         };
+
+        // File preview functions
+        function showFilePreview(file) {
+            const preview = document.getElementById('filePreview');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const fileIcon = document.getElementById('fileIcon');
+
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            
+            // Set appropriate icon
+            const extension = file.name.split('.').pop().toLowerCase();
+            switch(extension) {
+                case 'pdf':
+                    fileIcon.className = 'fa fa-file-pdf-o file-icon';
+                    break;
+                case 'doc':
+                case 'docx':
+                    fileIcon.className = 'fa fa-file-word-o file-icon';
+                    break;
+                case 'txt':
+                    fileIcon.className = 'fa fa-file-text-o file-icon';
+                    break;
+                default:
+                    fileIcon.className = 'fa fa-file file-icon';
+            }
+
+            preview.style.display = 'block';
+            preview.classList.add('fade-in');
+        }
+
+        function hideFilePreview() {
+            const preview = document.getElementById('filePreview');
+            preview.style.display = 'none';
+        }
+
+        // Progress functions
+        function updateProgress(progress) {
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+
+            progressContainer.style.display = 'block';
+            progressBar.style.width = progress + '%';
+            progressPercent.textContent = Math.round(progress) + '%';
+        }
+
+        function hideProgress() {
+            document.getElementById('uploadProgress').style.display = 'none';
+        }
+
+        // Success/Error handling
+        function showSuccess() {
+            document.querySelector('.upload-container').style.display = 'none';
+            document.getElementById('uploadSuccess').style.display = 'block';
+        }
+
+        function showError(message) {
+            // Create and show error toast
+            const toast = document.createElement('div');
+            toast.className = 'alert alert-danger position-fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `<i class="fa fa-exclamation-triangle me-2"></i>${message}`;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        // Button management
+        function updateUploadButton() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const titleInput = document.getElementById('title');
+            
+            const hasFile = selectedFile !== null;
+            const hasTitle = titleInput.value.trim().length > 0;
+            
+            uploadBtn.disabled = !(hasFile && hasTitle);
+        }
+
+        // Event listeners
+        document.getElementById('uploadBtn').addEventListener('click', function() {
+            const titleInput = document.getElementById('title');
+            
+            if (!selectedFile) {
+                showError('Please select a file to upload');
+                return;
+            }
+            
+            if (!titleInput.value.trim()) {
+                showError('Please enter a title for your scroll');
+                titleInput.focus();
+                return;
+            }
+
+            // Add title to the form data
+            const titleField = document.createElement('input');
+            titleField.type = 'hidden';
+            titleField.name = 'title';
+            titleField.value = titleInput.value;
+            myDropzone.element.appendChild(titleField);
+
+            // Start upload
+            this.disabled = true;
+            myDropzone.processQueue();
+        });
+
+        document.getElementById('title').addEventListener('input', updateUploadButton);
+
+        document.getElementById('removeFile').addEventListener('click', function() {
+            if (selectedFile) {
+                myDropzone.removeFile(selectedFile);
+            }
+        });
+
+        document.getElementById('uploadAnother').addEventListener('click', function() {
+            location.reload();
+        });
+
+        // Utility functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Drag and drop enhancements
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            document.querySelector('.enhanced-dropzone').classList.add('dz-drag-hover');
+        });
+
+        document.addEventListener('dragleave', function(e) {
+            if (e.clientX === 0 && e.clientY === 0) {
+                document.querySelector('.enhanced-dropzone').classList.remove('dz-drag-hover');
+            }
+        });
+
+        document.addEventListener('drop', function(e) {
+            document.querySelector('.enhanced-dropzone').classList.remove('dz-drag-hover');
+        });
     </script>
 </body>

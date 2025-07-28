@@ -111,7 +111,9 @@ WSGI_APPLICATION = 'auth.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(default='postgres://postgres:password@db:5432/virtualscroll')
 }
-FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  
+
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  
 
 

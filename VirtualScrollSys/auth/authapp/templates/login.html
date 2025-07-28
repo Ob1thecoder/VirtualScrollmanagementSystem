@@ -12,75 +12,490 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
-    <title>Log In Page</title>
+    <title>Virtual Scroll Access - Login</title>
+    <style>
+        /* Enhanced Login Page Styles */
+        .login-container {
+            background-color: #131313;
+            background: linear-gradient(135deg, #26262655 25%, transparent 25%) -5px 0/ 10px 10px, 
+                       linear-gradient(225deg, #262626 25%, transparent 25%) -5px 0/ 10px 10px, 
+                       linear-gradient(315deg, #26262655 25%, transparent 25%) 0px 0/ 10px 10px, 
+                       linear-gradient(45deg, #262626 25%, #131313 25%) 0px 0/ 10px 10px;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(128, 59, 177, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .login-card {
+            background: rgba(34, 32, 36, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(128, 59, 177, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-card:hover::before {
+            left: 100%;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control-enhanced {
+            background: rgba(38, 38, 38, 0.8);
+            border: 2px solid #444;
+            color: #EFF0F2;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-control-enhanced:focus {
+            background: rgba(42, 37, 48, 0.9);
+            border-color: #803bb1;
+            box-shadow: 0 0 0 0.2rem rgba(128, 59, 177, 0.25);
+            color: #EFF0F2;
+        }
+
+        .form-control-enhanced::placeholder {
+            color: #888;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-enhanced:focus::placeholder {
+            color: #bbb;
+            transform: translateY(-2px);
+        }
+
+        .form-label {
+            color: #bbb;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .form-group:focus-within .form-label {
+            color: #803bb1;
+        }
+
+        .btn-enhanced {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-enhanced:hover::before {
+            left: 100%;
+        }
+
+        .btn-enhanced:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(128, 59, 177, 0.4);
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from { transform: rotate(0turn); }
+            to { transform: rotate(1turn); }
+        }
+
+        .alert-enhanced {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 8px;
+            color: #f8d7da;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #444, transparent);
+        }
+
+        .divider span {
+            background: rgba(34, 32, 36, 0.95);
+            padding: 0 1rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .register-link a {
+            color: #803bb1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .register-link a:hover {
+            color: #9c5bcc;
+            text-decoration: underline;
+        }
+
+        .login-image {
+            opacity: 0;
+            animation: slideInRight 1s ease 0.5s forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-container {
+            opacity: 0;
+            animation: slideInLeft 1s ease 0.3s forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
 </head>
 <body>
-    <section class="vh-100" style="background-color: #131313; opacity: 1; background: linear-gradient(135deg, #26262655 25%, transparent 25%) -5px 0/ 10px 10px, linear-gradient(225deg, #262626 25%, transparent 25%) -5px 0/ 10px 10px, linear-gradient(315deg, #26262655 25%, transparent 25%) 0px 0/ 10px 10px, linear-gradient(45deg, #262626 25%, #131313 25%) 0px 0/ 10px 10px;">
-    <div class="container h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-lg-12 col-xl-11">
-            <div class="card text-black" style="border-radius: 25px;">
-            <div class="card-body p-md-5">
-                <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+    <section class="vh-100 login-container">
+        <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-12 col-xl-11">
+                    <div class="card login-card text-white">
+                        <div class="card-body p-md-5">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1 form-container">
+                                    <div class="login-header">
+                                        <h1>Welcome Back</h1>
+                                        <p>Sign in to access your scrolls</p>
+                                    </div>
 
-                    <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Log In</p>
+                                    <!-- Enhanced Error Display -->
+                                    {% if form.non_field_errors %}
+                                        <div class="alert alert-enhanced mb-4">
+                                            <i class="fa fa-exclamation-triangle me-2"></i>
+                                            {% for error in form.non_field_errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
 
-                    <!-- Django Form Login Start -->
-                    <form class="mx-1 mx-md-4" method="POST" action="{% url 'login' %}">
-                        {% csrf_token %}
-                        <!-- {{ form.as_p }} -->
+                                    <!-- Enhanced Login Form -->
+                                    <form method="POST" action="{% url 'login' %}" id="loginForm" novalidate>
+                                        {% csrf_token %}
+                                        
+                                        <div class="form-group">
+                                            <label for="username" class="form-label">
+                                                <i class="fa fa-user me-2"></i>Username
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control form-control-enhanced" 
+                                                   id="username" 
+                                                   name="username" 
+                                                   maxlength="150" 
+                                                   autofocus 
+                                                   placeholder="Enter your username" 
+                                                   required>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="password" class="form-label">
+                                                <i class="fa fa-lock me-2"></i>Password
+                                            </label>
+                                            <div class="position-relative">
+                                                <input type="password" 
+                                                       class="form-control form-control-enhanced" 
+                                                       id="password" 
+                                                       name="password" 
+                                                       placeholder="Enter your password" 
+                                                       required>
+                                                <button type="button" 
+                                                        class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-muted"
+                                                        id="togglePassword"
+                                                        tabindex="-1">
+                                                    <i class="fa fa-eye" id="passwordIcon"></i>
+                                                </button>
+                                            </div>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
 
-                        <!-- Display non-field errors at the top of the form -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    <div>{{ error }}</div>
-                                {% endfor %}
+                                        <div class="d-flex justify-content-center mb-4">
+                                            <button type="submit" class="btn btn-enhanced btn-lg w-100" id="loginBtn">
+                                                <i class="fa fa-sign-in me-2"></i>Sign In
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Guest Login with Enhanced Styling -->
+                                    <div class="divider">
+                                        <span>OR</span>
+                                    </div>
+                                    
+                                    <form method="POST" action="{% url 'guest_login' %}" id="guestForm">
+                                        {% csrf_token %}
+                                        <div class="d-flex justify-content-center mb-4">
+                                            <button type="submit" class="btn btn-outline-secondary btn-lg w-100" id="guestBtn">
+                                                <i class="fa fa-user-o me-2"></i>Continue as Guest
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Enhanced Register Link -->
+                                    <div class="register-link">
+                                        <p class="text-muted">Don't have an account? 
+                                            <a href="{% url 'register' %}">Create one here</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                                    <div class="login-image text-center w-100">
+                                        <img src="../static/images/login.png" 
+                                             class="img-fluid" 
+                                             alt="Virtual Scroll Access System" 
+                                             style="max-width: 450px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
+                                        <div class="mt-4">
+                                            <h3 style="color: #803bb1; font-weight: 600;">Virtual Scroll Access System</h3>
+                                            <p class="text-muted">Your digital library awaits</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        {% endif %}
-                        
-                        <div class="form-group mb-3">
-                            <label for="username">Username:</label>
-                            <input type="text" class="form-control" id="username" name="username" maxlength="150" autofocus placeholder="Enter Username" required>
-                        </div>                         
-                        <div class="form-group mb-3">
-                            <label for="password" class="mb-1">Password:</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
                         </div>
-
-                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="submit" class="btn btn-primary btn-block">Log In</button>
-                        </div>
-                        
-                    </form>
-                    <!-- Django Form Login End -->
-
-                    <!-- Optional Guest Login -->
-                    <form class="mx-1 mx-md-4" method="POST" action="{% url 'guest_login' %}">
-                        {% csrf_token %}
-                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                            <button type="submit" class="btn btn-secondary">Log in as Guest</button>
-                        </div>
-                    </form>
-
-                    <!-- Register Button -->
-                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                        <p>Don't have an account?</p>
-                        
-                        <a href="{% url 'register' %}">Register</a>
                     </div>
-
-                </div>
-                <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                    <img src="../static/images/login.png" class="img-fluid" alt="storyset sign-in-bro" style="margin-left: 60px; width: 450px;" >
-                </div>
                 </div>
             </div>
-            </div>
         </div>
-        </div>
-    </div>
     </section>
+
+    <script>
+        // Enhanced form validation and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const guestForm = document.getElementById('guestForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const guestBtn = document.getElementById('guestBtn');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+
+            // Password visibility toggle
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                if (type === 'text') {
+                    passwordIcon.className = 'fa fa-eye-slash';
+                } else {
+                    passwordIcon.className = 'fa fa-eye';
+                }
+            });
+
+            // Real-time validation
+            function validateField(field) {
+                const value = field.value.trim();
+                const isValid = value.length > 0;
+                
+                if (isValid) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                } else {
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    field.nextElementSibling.textContent = 'This field is required';
+                }
+                
+                return isValid;
+            }
+
+            // Add input event listeners
+            document.getElementById('username').addEventListener('input', function() {
+                validateField(this);
+            });
+
+            passwordInput.addEventListener('input', function() {
+                validateField(this);
+            });
+
+            // Enhanced form submission
+            loginForm.addEventListener('submit', function(e) {
+                const username = document.getElementById('username');
+                const password = passwordInput;
+                
+                const isUsernameValid = validateField(username);
+                const isPasswordValid = validateField(password);
+                
+                if (!isUsernameValid || !isPasswordValid) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Add loading state
+                loginBtn.classList.add('btn-loading');
+                loginBtn.disabled = true;
+                
+                // Re-enable after delay (in case of validation errors)
+                setTimeout(() => {
+                    loginBtn.classList.remove('btn-loading');
+                    loginBtn.disabled = false;
+                }, 3000);
+            });
+
+            // Guest form enhancement
+            guestForm.addEventListener('submit', function() {
+                guestBtn.classList.add('btn-loading');
+                guestBtn.disabled = true;
+            });
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Enter to submit form
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    const activeElement = document.activeElement;
+                    if (activeElement.closest('#loginForm')) {
+                        loginForm.submit();
+                    }
+                }
+                
+                // Ctrl/Cmd + G for guest login
+                if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+                    e.preventDefault();
+                    guestBtn.click();
+                }
+            });
+
+            // Add focus management
+            document.getElementById('username').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    passwordInput.focus();
+                }
+            });
+
+            // Auto-focus username field
+            document.getElementById('username').focus();
+        });
+    </script>
 </body>
 </html>
