@@ -1,11 +1,11 @@
 # Virtual Scroll Management System
 
 
-## 📜 Project Overview
+## Project Overview
 
-The Virtual Scroll Management System is a comprehensive full-stack web application designed as a digital library for managing and sharing text-based documents called "scrolls". This educational project demonstrates modern web development practices using a microservices architecture with Django (Python) for the frontend and Spring Boot (Java) for the backend API.
+The Virtual Scroll Management System is a comprehensive full-stack web application designed as a digital library for managing and sharing documents called "scrolls". This educational project demonstrates modern web development practices using a microservices architecture with Django  for the frontend and Spring Boot  for the backend API.
 
-### 🎯 Key Features
+### Key Features
 
 - **User Authentication & Authorization**: Secure user registration, login, and role-based access control
 - **Document Management**: Upload, view, download, and manage digital scrolls
@@ -14,7 +14,7 @@ The Virtual Scroll Management System is a comprehensive full-stack web applicati
 - **Guest Access**: Limited browsing capabilities for non-registered users
 - **Responsive Design**: Mobile-friendly interface built with modern web standards
 
-## 🏗️ Architecture
+## Architecture
 
 This application follows a microservices architecture pattern:
 
@@ -25,10 +25,10 @@ This application follows a microservices architecture pattern:
 │  Load Balancer  │    │   Frontend/UI    │    │   REST API      │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
                                 │                        │
-                                ▼                        ▼
+                                |                        |
                         ┌─────────────────────────────────────┐
-                        │         PostgreSQL Database        │
-                        │            (Port 5432)             │
+                        │         PostgreSQL Database         │
+                        │            (Port 5432)              │
                         └─────────────────────────────────────┘
 ```
 
@@ -40,9 +40,9 @@ This application follows a microservices architecture pattern:
 - **Nginx**: Reverse proxy for load balancing and routing requests
 - **Docker**: Containerization for consistent deployment across environments
 
-## 🚀 Quick Start
 
-### Prerequisites
+
+## Prerequisites
 
 - **Docker & Docker Compose** (recommended)
 - **Python 3.9+** (for local development)
