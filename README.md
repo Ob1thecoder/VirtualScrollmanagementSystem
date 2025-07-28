@@ -40,7 +40,6 @@ This application follows a microservices architecture pattern:
 - **Nginx**: Reverse proxy for load balancing and routing requests
 - **Docker**: Containerization for consistent deployment across environments
 
-## 🚀 Quick Start
 
 ### Prerequisites
 
