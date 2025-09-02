@@ -1,11 +1,25 @@
-
 FROM eclipse-temurin:17-jdk-jammy
 
 # Set working directory
 WORKDIR /app
 
-# Copy the built JAR file into the container
-COPY build/libs/*.jar ./app.jar
+# Copy Gradle wrapper and build files
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+
+# Make gradlew executable
+RUN chmod +x gradlew
+
+# Copy source code
+COPY src src
+
+# Build the application
+RUN ./gradlew clean build -x test
+
+# Copy the built JAR file (use a more specific name)
+RUN cp build/libs/*.jar app.jar
 
 # Expose the Spring Boot server port
 EXPOSE 8081
