@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Copy the built JAR file into the container
-COPY build/libs/app-1.0.0-plain.jar app.jar
+COPY build/libs/app-1.0.0.jar app.jar
 
 
 # Expose the Spring Boot server port
