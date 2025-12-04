@@ -14,7 +14,7 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <title>{% block title %}VirtualScrollAccessSystem{% endblock %}</title>
+    <title>{% block title %}My Website{% endblock %}</title>
     <!-- Include CSS Files -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -26,120 +26,36 @@
         }
 
         .nav-item.dropdown .dropdown-menu {
-            margin-top: 0; 
+            margin-top: 0; /* Fix alignment issues */
         }
-        .sidebar {
-            border-radius: 15px;
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            right: 0;
-            background-color: rgb(48, 10, 109);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: aqua;
-            font-size: 19px;
-            padding-bottom: 30px;
-            color: #818181;
-            display: inline-block;
-            transition: 0.15s;
-        }
-
-        .sidebar a:hover {
-            color: #f1f1f1;
-            
-        }
-        
-
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 40px;
-            margin-left: 50px;
-        }
-
-        .openbtn {
-            border-radius: 25px;
-            
-            cursor: pointer;
-            background-color: hsla(218, 97%, 56%, 1);
-            color: rgb(236, 239, 249);
-            padding: 10px 15px;
-            border: none;
-        }
-
-        .openbtn:hover {
-            background-color: hsla(280, 84%, 41%, 1);
-        }
-        .dropdown-btn {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #818181;
-            padding-bottom: 30px;
-            display: block;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            outline: none;
-            transition: opacity 0.5s ease; 
-        }
-        .dropdown-btn:hover {
-            color: #f1f1f1;
-            
-        }
-        .dropdown-container {
-            display: none;
-            background-color: rgb(38, 9, 84);
-            padding-left: 8px;
-            transition: 0.15s;
-        }
-        .dropdown-container a {
-            padding-bottom: 30px;
-            font-size: 18px;
-            transition: 0.15s;
-        }
-        
-        
     </style>
 </head>
 
 <body style="background-color: #131313; opacity: 1; background: linear-gradient(135deg, #26262655 25%, transparent 25%) -5px 0/ 10px 10px, linear-gradient(225deg, #262626 25%, transparent 25%) -5px 0/ 10px 10px, linear-gradient(315deg, #26262655 25%, transparent 25%) 0px 0/ 10px 10px, linear-gradient(45deg, #262626 25%, #131313 25%) 0px 0/ 10px 10px;" >
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, hsla(28, 84%, 41%, 1.00) 0%, hsla(52, 74%, 30%, 1.00) 100%);">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto">
                 <!-- Dashboard -->
                 {% if request.user.role == 'admin' %}
-                <li class="nav-item" id="dashboard">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_page' %}" style="color: #EFF0F2;">Dashboard</a>
                 </li>
                 {% endif %}
 
                 {% if request.user.role == 'user' %}
-                <li class="nav-item" id="dashboard">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'user_page' %}" style="color: #EFF0F2;">Dashboard</a>
                 </li>
                 {% endif %}
 
                 {% if request.user.role == 'guest' %}
-                <li class="nav-item" id="dashboard">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'guest_page' %}" style="color: #EFF0F2;">Dashboard</a>
                 </li>
                 {% endif %}
@@ -172,9 +88,6 @@
                             <li><a class="dropdown-item" href="{% url 'scroll_list' %}" style="color: #EFF0F2;">Scroll List</a></li>
                             <li><a class="dropdown-item" href="{% url 'upload_scroll' %}" style="color: #EFF0F2;">Add Scroll</a></li> 
                             <li><a class="dropdown-item" href="{% url 'your_scrolls' %}" style="color: #EFF0F2;">Your Scroll</a></li>
-                            <li >
-                                <a class="dropdown-item" href="{% url 'liked_scrolls' request.user.id %}" style="color: #EFF0F2;">Liked Scrolls</a>
-                            </li>
                         </ul>
                     </li>                
                 {% endif %}
@@ -183,13 +96,45 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
                     </li>
-                
+                {% else %}
+                    <!-- Profile Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_detail' %}" style="color: #EFF0F2;"></a>
+                    </li>
                     
 
-                    
-                    
+                    <!-- Logout Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}" style="color: #EFF0F2;"></a>
+                    </li>
                 {% endif %}
             </ul>
+
+            <!-- User Profile Section on Right Side -->
+            {% if not request.user.idKey == 'guest' %}
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false" style="color: #EFF0F2;">
+                    <img id="topbar-avatar" 
+                        src="{% if request.user.profile_picture and request.user.profile_picture.url %}{{ request.user.profile_picture.url }}{% else %}{% static 'images/avatar.jpg' %}{% endif %}" 
+                        alt="Profile" 
+                        class="rounded-circle me-2"
+                        style="width: 32px; height: 32px; object-fit: cover; border: 2px solid #EFF0F2;">
+                    <span id="topbar-idkey">{{ request.user.IDkey }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="background-color: #262626;">
+                        <li><a class="dropdown-item" href="{% url 'user_detail' %}" style="color: #EFF0F2;">
+                            <i class="fa fa-user me-2"></i>Profile
+                        </a></li>
+                        <li><hr class="dropdown-divider" style="border-color: #353335;"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}" style="color: #EFF0F2;">
+                            <i class="fa fa-sign-out me-2"></i>Logout
+                        </a></li>
+                    </ul>
+                </li>
+            </ul>
+            {% endif %}
 
             <style>
                 /* Custom hover color */
@@ -198,57 +143,57 @@
                     color: #EFF0F2;
                 }
 
+                /* Topbar avatar hover effect */
+                #topbar-avatar {
+                    transition: transform 0.3s ease;
+                }
+
+                #topbar-avatar:hover {
+                    transform: scale(1.1);
+                }
             </style>
         </div>
-        <div id="mySidebar" class="sidebar">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            {% if request.user.idKey == 'guest' %}
-                <a href="{% url 'login' %}">Login</a>
-                
-            {% else %}
-
-                <a href="{% url 'user_detail' %}">User Profile</a>
-                <button class="dropdown-btn">Manage Scrolls 
-                    <i class="fa fa-caret-down"></i>
-                </button>
-                <div class="dropdown-container">
-                    <a href="{% url 'upload_scroll' %}">Upload Scroll</a>
-                    <a href="{% url 'your_scrolls' %}">Your Scrolls</a>
-                    <a href="{% url 'liked_scrolls' request.user.id %}">Your Favourites</a>
-                </div>
-                <!-- <a href="{% url 'upload_scroll' %}">Upload Scroll</a>
-                <a href="{% url 'your_scrolls' %}">Your Scrolls</a>          -->
-                <a href="{% url 'logout' %}" >Logout</a>
-            {% endif %}
-            
-            
-            
-        </div>
-        <div>
-            <button class="openbtn" onclick="openNav()">&#9881; </button>
-        </div>
-        <script>
-            function openNav() {
-                document.getElementById("mySidebar").style.width = "200px";
-            }
-        
-            function closeNav() {
-                document.getElementById("mySidebar").style.width = "0";
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                var dropdown = document.querySelector('.dropdown-btn');
-                var dropdownContainer = document.querySelector('.dropdown-container');
-
-                dropdown.addEventListener('click', function() {
-                    dropdownContainer.style.display = dropdownContainer.style.display === 'block' ? 'none' : 'block';
-                });
-            });
-        </script>
     </nav>
 
     <!-- Include Bootstrap JS and jQuery at the bottom to ensure the dropdown works -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <script>
+    // Function to update topbar with user info
+    function updateTopbarUserInfo() {
+        fetch('/admin-info/', {  
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(admin => {
+            if (admin) {                
+                // Update topbar avatar
+                const topbarAvatar = document.getElementById('topbar-avatar');
+                if (topbarAvatar && admin.profile_picture) {
+                    topbarAvatar.src = admin.profile_picture;
+                }
+                
+                // Update topbar ID Key
+                const topbarIdkey = document.getElementById('topbar-idkey');
+                if (topbarIdkey) {
+                    topbarIdkey.textContent = admin.IDkey;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching admin info for topbar:', error);
+        });
+    }
+
+    // Update topbar when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTopbarUserInfo();
+    });
+    </script>
 </body>
 
 </html>
