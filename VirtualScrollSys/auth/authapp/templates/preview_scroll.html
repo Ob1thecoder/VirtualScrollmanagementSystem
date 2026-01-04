@@ -23,16 +23,42 @@
     <div class="page-container">             
         <!-- Page Section -->
         <div style="padding-left: 25px; margin-right: 25px;">
+            <!-- Enhanced Header Section -->
+            <div class="preview-header mb-4">
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                    <div>
+                        <h2 class="preview-title mb-2" style="color: #EFF0F2;">
+                            <i class="fa fa-file-text-o me-2" style="color: #803bb1;"></i>Scroll Preview
+                        </h2>
+                        <p class="text-muted mb-0">View and interact with your scroll content</p>
+                    </div>
+                    <a href="{% url 'scroll_list' %}" class="btn btn-outline-light">
+                        <i class="fa fa-arrow-circle-o-left me-2"></i>Back to Scroll List
+                    </a>
+                </div>
+            </div>
 
-        <h3 style="margin-top: 20px; margin-bottom: 20px; color: #EFF0F2;">Scroll Preview</h3>
-
-        <div class="container" style="margin-left: 0px; color: #EFF0F2;">
+        <div class="container preview-content-container" style="margin-left: 0px; color: #EFF0F2;">
             
 
             
-                {% if file_type == "jpg" or file_type == "png" %}
-                    <div class="image-container">
-                        <img src="data:image/{{ file_type }};base64,{{ image_data }}" alt="Image preview" />
+                {% if file_type == "jpg" or file_type == "png" or file_type == "jpeg" %}
+                    <div class="image-container-wrapper">
+                        <div class="image-controls mb-3 d-flex justify-content-center align-items-center gap-3">
+                            <button class="btn btn-sm btn-outline-light" id="zoomInBtn">
+                                <i class="fa fa-search-plus"></i> Zoom In
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" id="zoomOutBtn">
+                                <i class="fa fa-search-minus"></i> Zoom Out
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" id="resetZoomBtn">
+                                <i class="fa fa-refresh"></i> Reset
+                            </button>
+                            <span class="text-muted" id="zoomLevel">100%</span>
+                        </div>
+                        <div class="image-container" id="imageContainer">
+                            <img src="data:image/{{ file_type }};base64,{{ image_data }}" alt="Image preview" id="previewImage" />
+                        </div>
                     </div>
                 {% elif file_type == "pdf" %}
                 <!-- <div class="pdf-container">
@@ -40,33 +66,33 @@
                 </div> -->
 
                 <div class="pdf-container">
-                    <!-- Navigation for PDF Viewer -->
-                    <ul class="nav nav-tabs d-flex justify-content-between align-items-center text-dark p-3">
-                        <li class="nav-item">
-                            
-                           
-                            
-                            Page <span id="page_num"></span> of <span id="page_count"></span>
-                        </li>
-                        <li class="nav-item"> <a href="#" class="p-1 border rounded-circle" id="prev_page">
-                            <i class="bi bi-chevron-left"></i>
-                        </a></li>
-                        <li class="nav-item"> <input type="number" id="current_page" value="1" class="d-inline form-control" /></li>
-                        
-                        <li class="nav-item"> <a href="#" class="p-1 border rounded-circle" id="next_page">
-                            <i class="bi bi-chevron-right"></i>
-                        </a></li>
-                
-                
-                        <li class="nav-item">
-                            <button class="rounded-circle p-2 border-0 btn btn-primary" id="zoom_in">
-                                <i class="bi bi-zoom-in"></i>
-                            </button>
-                            <button class="rounded-circle p-2 border-0 btn btn-primary" id="zoom_out">
-                                <i class="bi bi-zoom-out"></i>
-                            </button>
-                        </li>
-                    </ul>
+                    <!-- Enhanced Navigation for PDF Viewer -->
+                    <div class="pdf-controls-bar">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap p-3" style="background: rgba(34, 32, 36, 0.95); border-radius: 10px 10px 0 0; border-bottom: 2px solid #803bb1;">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="text-light fw-bold">
+                                    <i class="fa fa-file-pdf-o me-2" style="color: #dc3545;"></i>
+                                    Page <span id="page_num" class="text-warning">1</span> of <span id="page_count" class="text-warning">1</span>
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <button class="btn btn-sm btn-outline-light" id="prev_page" title="Previous Page">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                                <input type="number" id="current_page" value="1" min="1" class="form-control form-control-sm text-center" style="width: 70px; background: #262626; color: #EFF0F2; border: 1px solid #444;" />
+                                <button class="btn btn-sm btn-outline-light" id="next_page" title="Next Page">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
+                                <div class="vr" style="height: 25px; border-left: 1px solid #444; margin: 0 10px;"></div>
+                                <button class="btn btn-sm btn-outline-light" id="zoom_out" title="Zoom Out">
+                                    <i class="fa fa-search-minus"></i>
+                                </button>
+                                <span class="text-muted" id="zoomDisplay" style="min-width: 50px; text-align: center;">150%</span>
+                                <button class="btn btn-sm btn-outline-light" id="zoom_in" title="Zoom In">
+                                    <i class="fa fa-search-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                 
                     <!-- Canvas for rendering the PDF -->
                     
@@ -155,12 +181,14 @@
                     // Zoom In
                     document.getElementById('zoom_in').addEventListener('click', () => {
                         currentScale += 0.2;
+                        document.getElementById('zoomDisplay').textContent = Math.round(currentScale * 100) + '%';
                         renderPage(pageNum);
                     });
-                
+                    
                     // Zoom Out
                     document.getElementById('zoom_out').addEventListener('click', () => {
-                        currentScale = Math.max(currentScale - 0.2, 0.5); 
+                        currentScale = Math.max(currentScale - 0.2, 0.5);
+                        document.getElementById('zoomDisplay').textContent = Math.round(currentScale * 100) + '%';
                         renderPage(pageNum);
                     });
                 
@@ -175,9 +203,71 @@
                         }
                     });
                 </script>
-                
-                
-                    
+
+                <!-- Image Zoom Script -->
+                <script>
+                    let imageZoom = 1;
+                    const image = document.getElementById('previewImage');
+                    const zoomInBtn = document.getElementById('zoomInBtn');
+                    const zoomOutBtn = document.getElementById('zoomOutBtn');
+                    const resetZoomBtn = document.getElementById('resetZoomBtn');
+                    const zoomLevel = document.getElementById('zoomLevel');
+
+                    if (image) {
+                        zoomInBtn?.addEventListener('click', () => {
+                            imageZoom = Math.min(imageZoom + 0.25, 3);
+                            image.style.transform = `scale(${imageZoom})`;
+                            zoomLevel.textContent = Math.round(imageZoom * 100) + '%';
+                        });
+
+                        zoomOutBtn?.addEventListener('click', () => {
+                            imageZoom = Math.max(imageZoom - 0.25, 0.5);
+                            image.style.transform = `scale(${imageZoom})`;
+                            zoomLevel.textContent = Math.round(imageZoom * 100) + '%';
+                        });
+
+                        resetZoomBtn?.addEventListener('click', () => {
+                            imageZoom = 1;
+                            image.style.transform = 'scale(1)';
+                            zoomLevel.textContent = '100%';
+                        });
+                    }
+                </script>
+
+                <!-- Text Preview Script -->
+                <script>
+                    let fontSize = 16;
+                    const textContent = document.getElementById('textContent');
+                    const increaseFontBtn = document.getElementById('increaseFont');
+                    const decreaseFontBtn = document.getElementById('decreaseFont');
+                    const copyTextBtn = document.getElementById('copyText');
+                    const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+
+                    if (textContent) {
+                        increaseFontBtn?.addEventListener('click', () => {
+                            fontSize = Math.min(fontSize + 2, 24);
+                            textContent.style.fontSize = fontSize + 'px';
+                            fontSizeDisplay.textContent = fontSize + 'px';
+                        });
+
+                        decreaseFontBtn?.addEventListener('click', () => {
+                            fontSize = Math.max(fontSize - 2, 12);
+                            textContent.style.fontSize = fontSize + 'px';
+                            fontSizeDisplay.textContent = fontSize + 'px';
+                        });
+
+                        copyTextBtn?.addEventListener('click', () => {
+                            const text = textContent.textContent;
+                            navigator.clipboard.writeText(text).then(() => {
+                                const originalText = copyTextBtn.innerHTML;
+                                copyTextBtn.innerHTML = '<i class="fa fa-check"></i> Copied!';
+                                setTimeout(() => {
+                                    copyTextBtn.innerHTML = originalText;
+                                }, 2000);
+                            });
+                        });
+                    }
+                </script>
                 
                 <style>
                  
@@ -214,50 +304,113 @@
                     
 
                 {% elif file_type == "txt" %}
-                <div class="scroll-content">{{ text_data }}</div>
+                <div class="text-preview-wrapper">
+                    <div class="text-controls mb-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm btn-outline-light" id="increaseFont">
+                                <i class="fa fa-font"></i> <i class="fa fa-plus"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" id="decreaseFont">
+                                <i class="fa fa-font"></i> <i class="fa fa-minus"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" id="copyText">
+                                <i class="fa fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <span class="text-muted" id="fontSizeDisplay">16px</span>
+                    </div>
+                    <div class="scroll-content" id="textContent">{{ text_data }}</div>
+                </div>
                 {% else %}
-                   <div class="scroll-content"> <p>Preview not available for this file type.</p></div>
+                   <div class="unsupported-file-type">
+                       <div class="text-center p-5">
+                           <i class="fa fa-file-o" style="font-size: 4rem; color: #803bb1; margin-bottom: 20px;"></i>
+                           <h4 style="color: #EFF0F2;">Preview not available</h4>
+                           <p class="text-muted">This file type is not supported for preview.</p>
+                       </div>
+                   </div>
                 {% endif %}
+            </div>
             
-
-            
-            
-            <br/>
-
             <style>
-               
-                
-                .image-container img {
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 500px;
-                    align-items: center;
-                    justify-content: center;
-                    background: #222024;
-                    border: 2px solid #62029a;
+                /* Enhanced Preview Styles */
+                .preview-header {
+                    background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
+                    padding: 20px;
+                    border-radius: 10px;
+                    border: 1px solid rgba(128, 59, 177, 0.3);
+                }
+
+                .preview-title {
+                    font-weight: 700;
+                    background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+
+                .preview-content-container {
+                    background: rgba(34, 32, 36, 0.5);
                     border-radius: 10px;
                     padding: 20px;
-                    max-width: 90%;
-                    
-                    margin: 20px auto;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(128, 59, 177, 0.2);
+                }
+
+                /* Image Preview Styles */
+                .image-container-wrapper {
+                    background: #222024;
+                    border-radius: 10px;
+                    padding: 20px;
+                    border: 2px solid rgba(128, 59, 177, 0.3);
+                }
+
+                .image-controls {
+                    background: rgba(38, 38, 38, 0.8);
+                    padding: 10px;
+                    border-radius: 8px;
+                }
+
+                .image-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 500px;
+                    background: #1a1a1a;
+                    border-radius: 8px;
+                    padding: 20px;
+                    overflow: auto;
+                    max-height: 80vh;
+                }
+
+                .image-container img {
+                    max-width: 100%;
+                    height: auto;
+                    border-radius: 8px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+                    transition: transform 0.3s ease;
+                }
+
+                .image-container img:hover {
+                    transform: scale(1.02);
                 }
 
                 
-                .pdf-container  {
-                    
+                .pdf-container {
                     display: flex;
                     flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);;
-                    border: 2px solid #62029a;
+                    background: #222024;
+                    border: 2px solid rgba(128, 59, 177, 0.3);
                     border-radius: 10px;
-                    padding: 20px;
-                    max-width: 90%;
+                    padding: 0;
+                    max-width: 100%;
                     min-height: 500px;
                     margin: 20px auto;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+                    overflow: hidden;
+                }
+
+                .pdf-controls-bar {
+                    width: 100%;
                 }
                 .pdf-viewer {
                     display: flex;
@@ -280,28 +433,72 @@
                     border-radius: 5px;
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 }
+                /* Text Preview Styles */
+                .text-preview-wrapper {
+                    background: #222024;
+                    border-radius: 10px;
+                    padding: 20px;
+                    border: 2px solid rgba(128, 59, 177, 0.3);
+                }
+
+                .text-controls {
+                    background: rgba(38, 38, 38, 0.8);
+                    padding: 10px;
+                    border-radius: 8px;
+                }
+
                 .scroll-content {
                     white-space: pre-wrap;  
-                    background-color: #ecd4e6;
-                    border: 0.5px solid #9032b8;
-                    color:#262626;
-                    padding: 15px;
-                    font-family: monospace;
-                    font-size: 21px;
-                    max-width: 800px;
+                    background: linear-gradient(135deg, #1a1a1a 0%, #222024 100%);
+                    border: 1px solid rgba(128, 59, 177, 0.3);
+                    color: #EFF0F2;
+                    padding: 25px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 16px;
+                    line-height: 1.8;
+                    max-width: 100%;
                     min-height: 500px;
-                    margin: 20px auto;
-                    overflow-wrap: break-word;  
+                    max-height: 80vh;
+                    margin: 0 auto;
+                    overflow-wrap: break-word;
+                    overflow-y: auto;
+                    border-radius: 8px;
+                    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+                }
+
+                .unsupported-file-type {
+                    background: #222024;
+                    border-radius: 10px;
+                    border: 2px solid rgba(128, 59, 177, 0.3);
+                    padding: 40px;
+                }
+
+                /* Responsive Design */
+                @media (max-width: 768px) {
+                    .preview-header .d-flex {
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+
+                    .image-container {
+                        min-height: 300px;
+                        padding: 10px;
+                    }
+
+                    .pdf-controls-bar .d-flex {
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+
+                    .scroll-content {
+                        font-size: 14px;
+                        padding: 15px;
+                    }
                 }
 
                 
                 
             </style>
-            
-           <a href="{% url 'scroll_list' %}" class="btn btn-primary" style="margin-right: 10px; margin-bottom: 8px;">
-                <i class="fa fa-arrow-circle-o-left" style="font-size:16px;"></i> Back to Scroll List
-            </a>
-        </div>
         </div> 
     </div>
     

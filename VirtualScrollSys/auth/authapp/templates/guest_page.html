@@ -19,30 +19,153 @@
             flex-direction: column;
         }
 
+        /* Enhanced Guest Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
+            border: 1px solid rgba(128, 59, 177, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(128, 59, 177, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .welcome-section h4 {
+            color: #EFF0F2;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section .guest-name {
+            color: #C085FB;
+        }
+
+        .welcome-section h6 {
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .welcome-section p {
+            color: #EFF0F2;
+            margin-bottom: 10px;
+        }
+
+        .guest-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        /* Popular Scrolls Section */
+        .popular-scrolls {
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
+            border: 1px solid rgba(128, 59, 177, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .popular-scrolls h3 {
+            color: #C085FB;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .popular-scrolls h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #803bb1 0%, #6d2fab 100%);
+            border-radius: 2px;
+        }
+
         .card-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
-            padding: 16px;
+            gap: 20px;
+            justify-content: flex-start;
+            padding: 16px 0;
         }
 
         .scroll-card {
-            background-color: #222024;
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
             color: #EFF0F2;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: calc(33.333% - 16px);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: calc(33.333% - 20px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(128, 59, 177, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s;
+        }
+
+        .scroll-card:hover::before {
+            left: 100%;
         }
 
         .scroll-card:hover {
-            background: linear-gradient(90deg, #803bb1 0%, #6d2fab 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(128, 59, 177, 0.4);
+            border-color: rgba(128, 59, 177, 0.5);
         }
 
         .scroll-card h5 {
             color: #ffc107;
             font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .scroll-card p {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .scroll-card strong {
+            color: #C085FB;
         }
 
         .scroll-card-actions {
@@ -52,18 +175,113 @@
             flex-wrap: wrap;
         }
 
+        .scroll-card-actions .btn {
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .scroll-card-actions .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Login Prompt */
+        .login-prompt {
+            background: rgba(128, 59, 177, 0.1);
+            border: 1px solid rgba(128, 59, 177, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .login-prompt p {
+            color: #EFF0F2;
+            margin-bottom: 15px;
+        }
+
+        .login-prompt .btn {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-prompt .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(128, 59, 177, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #EFF0F2;
+            width: 100%;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #803bb1;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            color: #C085FB;
+            margin-bottom: 10px;
+        }
+
         /* Responsive Layout */
+        @media (max-width: 992px) {
+            .scroll-card {
+                width: calc(50% - 20px);
+            }
+        }
+
         @media (max-width: 768px) {
             .scroll-card {
-                width: calc(50% - 16px);
+                width: 100%;
+            }
+
+            .welcome-section {
+                padding: 20px;
             }
         }
 
         @media (max-width: 480px) {
-            .scroll-card {
-                width: 100%;
+            .page-container {
+                padding: 15px;
+            }
+
+            .popular-scrolls {
+                padding: 20px;
             }
         }
+
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .scroll-card:nth-child(1) { animation-delay: 0.1s; }
+        .scroll-card:nth-child(2) { animation-delay: 0.2s; }
+        .scroll-card:nth-child(3) { animation-delay: 0.3s; }
+        .scroll-card:nth-child(4) { animation-delay: 0.4s; }
+        .scroll-card:nth-child(5) { animation-delay: 0.5s; }
     </style>
 
     <title>Guest Dashboard</title>
@@ -71,36 +289,79 @@
 </head>
 <body>
     <div class="page-container">             
-        <!-- Page Section -->
-        <div style="padding-left: 25px; margin-right: 25px; ">
-            <div class="alert mt-3" style="background-color: #262626; color: #EFF0F2">
-                <h4>Welcome, Guest <strong style="color: #CE83EF; text-transform: capitalize">{{ user.username }}</strong>!</h4>
-                <h6>You are exploring the Virtual Scroll Access System (VSAS)</h6>
-                <p class="mb-0">Feel free to browse the available scrolls and discover new knowledge!</p>
-            </div>
-        </div>
-        <div class="popular-scrolls mt-4" style="background-color: #262626; color: #EFF0F2; border-radius: 5px; padding: 20px;">
-
-            <!-- New Popular Scrolls Section -->
-            <div class="card-container">
-                <h3 class="text-center" style="color: #C085FB; width: 100%;">Top 5 Most Popular Scrolls</h3>
-                {% for scroll in popular_scrolls %}
-                <div class="scroll-card">
-                    <h5>Title: {{ scroll.title }}</h5>
-                    <p><strong>ID:</strong> {{ scroll.id }}</p>
-                    <p><strong>Uploader:</strong> {{ scroll.owner }}</p>
-                    <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
-                    <p><strong>File Type:</strong> {{ scroll.fileType }}</p>
-                    <p><strong>Downloads:</strong> {{ scroll.downloadCount }}</p>
-                    <div class="scroll-card-actions">
-                        <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
-                            <button type="submit" class="btn btn-warning">
-                                <i class="fa fa-eye"></i> Preview
-                            </button>
-                        </form>
-                    </div>
+        <!-- Enhanced Guest Welcome Section -->
+        <div class="welcome-section">
+            <div class="d-flex align-items-center mb-3">
+                <i class="fa fa-user-secret me-3" style="font-size: 3rem; color: #C085FB;"></i>
+                <div>
+                    <h4>Welcome, <span class="guest-name">Curious Mind</span>!
+                        <span class="guest-badge">GUEST</span>
+                    </h4>
+                    <h6>You are exploring the Virtual Scroll Access System (VSAS) as a Guest</h6>
                 </div>
-                {% endfor %}
+            </div>
+            <p class="mb-2">
+                <i class="fa fa-eye me-2" style="color: #ffc107;"></i>
+                As a guest, you can preview scrolls and explore the library.
+            </p>
+            <p class="mb-0">
+                <i class="fa fa-info-circle me-2" style="color: #803bb1;"></i>
+                <a href="{% url 'login' %}" style="color: #C085FB; text-decoration: none; font-weight: 600;">Sign in</a> to unlock full features like downloading and uploading scrolls!
+            </p>
+        </div>
+
+        <!-- Popular Scrolls Section -->
+        <div class="popular-scrolls">
+            <h3>
+                <i class="fa fa-fire me-2"></i>Top 5 Most Popular Scrolls
+            </h3>
+            <div class="card-container">
+                {% if popular_scrolls %}
+                    {% for scroll in popular_scrolls %}
+                    <div class="scroll-card">
+                        <h5>
+                            <i class="fa fa-file-text-o me-2"></i>{{ scroll.title }}
+                        </h5>
+                        <p><strong>ID:</strong> {{ scroll.id }}</p>
+                        <p><strong>Uploader:</strong> 
+                            <span style="color: #C085FB;">{{ scroll.owner }}</span>
+                        </p>
+                        <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
+                        <p><strong>File Type:</strong> 
+                            <span class="badge bg-secondary">{{ scroll.fileType|upper }}</span>
+                        </p>
+                        <p><strong>Downloads:</strong> 
+                            <span style="color: #ffc107;">
+                                <i class="fa fa-download me-1"></i>{{ scroll.downloadCount }}
+                            </span>
+                        </p>
+                        <div class="scroll-card-actions">
+                            <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fa fa-eye"></i> Preview
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fa fa-inbox"></i>
+                        <h4>No Popular Scrolls Yet</h4>
+                        <p class="text-muted">Check back later for popular content!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Login Prompt -->
+            <div class="login-prompt">
+                <p>
+                    <i class="fa fa-lock me-2"></i>
+                    Want to download and upload scrolls?
+                </p>
+                <a href="{% url 'login' %}" class="btn">
+                    <i class="fa fa-sign-in me-2"></i>Sign In to Unlock Features
+                </a>
             </div>
         </div>
     </div>

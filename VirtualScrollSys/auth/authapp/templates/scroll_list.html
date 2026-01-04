@@ -18,44 +18,101 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        }
+
+        /* Enhanced Search Section */
+        .search-container {
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
+            border: 1px solid rgba(128, 59, 177, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-container h4 {
+            color: #C085FB;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .search-container .form-control {
+            background-color: #262626;
+            color: #EFF0F2;
+            border: 2px solid #444;
+            transition: all 0.3s ease;
+        }
+
+        .search-container .form-control:focus {
+            background-color: #2a2a2a;
+            border-color: #803bb1;
+            box-shadow: 0 0 0 0.2rem rgba(128, 59, 177, 0.25);
+            color: #EFF0F2;
+        }
+
+        .search-container .form-label {
+            color: #bbb;
+            font-weight: 500;
+            margin-bottom: 8px;
         }
 
         /* Card View */
         .card-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 20px;
             padding: 16px;
-        }
-        .btn-secondary {
-            background-color: gray;
-            color: white;
-            transition: background-color 0.3s, color 0.3s;
+            justify-content: flex-start;
         }
 
-        .btn-primary {
-            background-color: blue;
-            color: white;
-            transition: background-color 0.3s, color 0.3s;
-        }
         .scroll-card {
-            background-color: #222024;
+            background: linear-gradient(135deg, #222024 0%, #2a2530 100%);
             color: #EFF0F2;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: calc(33.333% - 16px);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: calc(33.333% - 20px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(128, 59, 177, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s;
+        }
+
+        .scroll-card:hover::before {
+            left: 100%;
         }
 
         .scroll-card:hover {
-            background: linear-gradient(90deg, #803bb1 0%, #6d2fab 100%);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(128, 59, 177, 0.4);
+            border-color: rgba(128, 59, 177, 0.5);
         }
 
         .scroll-card h5 {
             color: #ffc107;
             font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .scroll-card p {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .scroll-card strong {
+            color: #C085FB;
         }
 
         .scroll-card-actions {
@@ -65,90 +122,273 @@
             flex-wrap: wrap;
         }
 
-        /* Responsive Layout */
-        @media (max-width: 768px) {
-            .scroll-card {
-                width: calc(50% - 16px);
-            }
+        .scroll-card-actions .btn {
+            transition: all 0.3s ease;
+            border-radius: 6px;
         }
 
-        @media (max-width: 480px) {
-            .scroll-card {
-                width: 100%;
-            }
+        .scroll-card-actions .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background-color: #444;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #9c5bcc 0%, #803bb1 100%);
+            transform: scale(1.05);
+        }
+
+        /* View Toggle Button */
+        .view-toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 16px;
+        }
+
+        .view-toggle-container h3 {
+            color: #C085FB;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        #toggleViewButton {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #toggleViewButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(128, 59, 177, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #EFF0F2;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #803bb1;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            color: #C085FB;
+            margin-bottom: 10px;
         }
 
         /* Table View */
         .table-container {
-            display: none; 
+            display: none;
+            overflow-x: auto;
+        }
+
+        .table-container table {
+            background: #222024;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead tr {
+            background: linear-gradient(135deg, #803bb1 0%, #6d2fab 100%) !important;
+        }
+
+        thead th {
+            color: #EFF0F2 !important;
+            font-weight: 600;
+            border: none !important;
+            padding: 15px !important;
         }
 
         tbody tr:nth-child(odd) {
-            background-color: #131313;
+            background-color: #1a1a1a;
         }
 
         tbody tr:nth-child(even) {
             background-color: #222024;
         }
 
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
         tbody tr:hover {
-            background: linear-gradient(90deg, hsla(280, 84%, 41%, 1) 0%, hsla(218, 97%, 56%, 1) 100%);
+            background: linear-gradient(90deg, rgba(128, 59, 177, 0.3) 0%, rgba(109, 47, 171, 0.3) 100%);
+            transform: scale(1.01);
         }
 
         tbody tr:hover td {
             color: #EFF0F2;
         }
+
+        tbody td {
+            color: #EFF0F2;
+            padding: 15px !important;
+            border-color: #333 !important;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 992px) {
+            .scroll-card {
+                width: calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .scroll-card {
+                width: 100%;
+            }
+
+            .search-container .row {
+                flex-direction: column;
+            }
+
+            .view-toggle-container {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-container {
+                padding: 15px;
+            }
+
+            .search-container {
+                padding: 15px;
+            }
+        }
+
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .scroll-card:nth-child(1) { animation-delay: 0.1s; }
+        .scroll-card:nth-child(2) { animation-delay: 0.2s; }
+        .scroll-card:nth-child(3) { animation-delay: 0.3s; }
+        .scroll-card:nth-child(4) { animation-delay: 0.4s; }
+        .scroll-card:nth-child(5) { animation-delay: 0.5s; }
     </style>
 </head>
 <body>
     <div class="page-container">
-        <!-- Search Section -->
-        <div class="card p-3 mb-4" style="background-color: #222024; color: #EFF0F2; border-radius: 15px;">
-            <h4 class="card-title mb-3">Search Scroll</h4>
-            <form method="GET" action="{% url 'search_scrolls' %}">
-                <div class="row align-items-center">
+        <!-- Enhanced Search Section -->
+        <div class="search-container">
+            <h4>
+                <i class="fa fa-search me-2"></i>Search Scrolls
+            </h4>
+            <form method="GET" action="{% url 'search_scrolls' %}" id="searchForm">
+                <div class="row align-items-end g-3">
                     <div class="form-group col-md-2">
-                        <label for="scrollId" class="mb-1">Scroll ID:</label>
-                        <input type="number" class="form-control" name="id" id="scrollId" placeholder="Enter Scroll ID" style="background-color: #262626; color: #EFF0F2;">
+                        <label for="scrollId" class="form-label">
+                            <i class="fa fa-hashtag me-1"></i>Scroll ID
+                        </label>
+                        <input type="number" class="form-control" name="id" id="scrollId" placeholder="e.g. 123">
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="title" class="mb-1">Title:</label>
-                        <input type="text" class="form-control" name="title" id="title" placeholder="Enter title" style="background-color: #262626; color: #EFF0F2;">
+                        <label for="title" class="form-label">
+                            <i class="fa fa-file-text-o me-1"></i>Title
+                        </label>
+                        <input type="text" class="form-control" name="title" id="title" placeholder="Enter title">
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="owner" class="mb-1">Uploader:</label>
-                        <input type="text" class="form-control" name="owner" id="owner" placeholder="Enter Uploader ID" style="background-color: #262626; color: #EFF0F2;">
+                        <label for="owner" class="form-label">
+                            <i class="fa fa-user me-1"></i>Uploader
+                        </label>
+                        <input type="text" class="form-control" name="owner" id="owner" placeholder="Enter username">
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="uploadedAt" class="mb-1">Upload Date:</label>
-                        <input type="date" class="form-control" name="uploadedAt" id="uploadedAt" style="background-color: #262626; color: #EFF0F2;">
+                        <label for="uploadedAt" class="form-label">
+                            <i class="fa fa-calendar me-1"></i>Upload Date
+                        </label>
+                        <input type="date" class="form-control" name="uploadedAt" id="uploadedAt">
                     </div>
                     <div class="col-md-1">
-                        <button type="submit" name="submit" class="btn btn-primary mt-3">
+                        <button type="submit" name="submit" class="btn btn-primary w-100" style="padding: 10px;">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
                 </div>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-sm btn-outline-light" id="clearSearch">
+                        <i class="fa fa-times me-1"></i>Clear Filters
+                    </button>
+                </div>
             </form>
         </div>
 
-        <!-- Toggle Button -->
-        <div class="text-end mb-3">
+        <!-- View Toggle Section -->
+        <div class="view-toggle-container">
+            <h3>
+                <i class="fa fa-list me-2"></i>All Scrolls
+                <span class="badge bg-secondary ms-2" id="scrollCount">{{ scrolls|length }}</span>
+            </h3>
             <button id="toggleViewButton" class="btn btn-primary">
-                <i class="fa fa-th"></i> Toggle to Table View
+                <i class="fa fa-th"></i> Switch to Table View
             </button>
         </div>
 
         <!-- Card View -->
-        <div class="card-container">
-            {% for scroll in scrolls %}
-            <div class="scroll-card">
-                <h5>Title: {{ scroll.title }}</h5>
-                <p><strong>ID:</strong> {{ scroll.id }}</p>
-                <p><strong>Uploader:</strong> {{ scroll.owner }}</p>
-                <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
-                <p><strong>Downloads:</strong> {{ scroll.fileType }}</p>
-                <p><strong>Downloads:</strong> {{ scroll.downloadCount }}</p>
+        <div class="card-container" id="cardContainer">
+            {% if scrolls %}
+                {% for scroll in scrolls %}
+                <div class="scroll-card">
+                    <h5>
+                        <i class="fa fa-file-text-o me-2"></i>{{ scroll.title }}
+                    </h5>
+                    <p><strong>ID:</strong> {{ scroll.id }}</p>
+                    <p><strong>Uploader:</strong> 
+                        <span style="color: #C085FB;">{{ scroll.owner }}</span>
+                    </p>
+                    <p><strong>Upload Date:</strong> {{ scroll.uploadedAt }}</p>
+                    <p><strong>File Type:</strong> 
+                        <span class="badge bg-secondary">{{ scroll.fileType|upper }}</span>
+                    </p>
+                    <p><strong>Downloads:</strong> 
+                        <span style="color: #ffc107;">
+                            <i class="fa fa-download me-1"></i>{{ scroll.downloadCount }}
+                        </span>
+                    </p>
                 <div class="scroll-card-actions">
                     <form method="GET" action="{% url 'preview_scroll_page' scroll.id %}">
                         <button type="submit" class="btn btn-warning">
@@ -176,8 +416,15 @@
                     </button>
                     {% endif %}
                 </div>
-            </div>
-            {% endfor %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state" style="width: 100%;">
+                    <i class="fa fa-inbox"></i>
+                    <h4>No Scrolls Found</h4>
+                    <p class="text-muted">Try adjusting your search filters or upload a new scroll!</p>
+                </div>
+            {% endif %}
         </div>
 
         <!-- Table View -->
@@ -236,7 +483,11 @@
                 </tbody>
             </table>
             {% else %}
-            <p>No scrolls found. Upload your first scroll!</p>
+                <div class="empty-state">
+                    <i class="fa fa-inbox"></i>
+                    <h4>No Scrolls Found</h4>
+                    <p class="text-muted">Try adjusting your search filters or upload a new scroll!</p>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -244,18 +495,28 @@
     <script>
         const toggleButton = document.getElementById('toggleViewButton');
         const tableContainer = document.querySelector('.table-container');
-        const cardContainer = document.querySelector('.card-container');
+        const cardContainer = document.getElementById('cardContainer');
 
+        // View toggle functionality
         toggleButton.addEventListener('click', () => {
             if (cardContainer.style.display === 'none') {
                 cardContainer.style.display = 'flex';
                 tableContainer.style.display = 'none';
-                toggleButton.innerHTML = '<i class="fa fa-table"></i> Toggle to Table View';
+                toggleButton.innerHTML = '<i class="fa fa-table"></i> Switch to Table View';
             } else {
                 cardContainer.style.display = 'none';
                 tableContainer.style.display = 'block';
-                toggleButton.innerHTML = '<i class="fa fa-th"></i> Toggle to Card View';
+                toggleButton.innerHTML = '<i class="fa fa-th"></i> Switch to Card View';
             }
+        });
+
+        // Clear search functionality
+        document.getElementById('clearSearch')?.addEventListener('click', () => {
+            document.getElementById('scrollId').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('owner').value = '';
+            document.getElementById('uploadedAt').value = '';
+            window.location.href = '{% url "scroll_list" %}';
         });
 
         function toggleLike(scrollId, userId, button) {
