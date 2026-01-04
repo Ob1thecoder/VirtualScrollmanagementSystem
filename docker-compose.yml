@@ -8,9 +8,15 @@ services:
     container_name: django-service
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgres://postgres:password@db:5432/virtualscroll
-      SPRING_BOOT_API_URL_S: http://springboot-service:8081/api/admin
+      # All values must come from .env file - no hardcoded secrets
+      DATABASE_URL: ${DATABASE_URL}
+      SPRING_BOOT_API_URL_S: ${SPRING_BOOT_API_URL_S:-http://springboot-service:8081/api/admin}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-*}
     depends_on:
       - db
       - springboot
@@ -25,8 +31,16 @@ services:
     container_name: springboot-service
     ports:
       - "8081:8081"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgres://postgres:password@db:5432/virtualscroll
+      # Database configuration from .env file - no hardcoded credentials
+      DATABASE_URL: ${DATABASE_URL}
+      # Spring Boot needs JDBC URL format
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/${POSTGRES_DB:-virtualscroll}}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     depends_on:
       - db
     networks:
@@ -36,10 +50,13 @@ services:
   db:
     image: postgres:13
     container_name: postgres-db
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: virtualscroll
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      # All database credentials from .env file - no hardcoded passwords
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     networks:

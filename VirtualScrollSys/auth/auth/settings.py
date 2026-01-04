@@ -23,14 +23,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w!kamkd-%)j%9mhz)3_co$g4+r_&9ya%+^3$g7s&@m76^seo&a'
+# SECRET_KEY must be set via environment variable - no hardcoded fallback
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError(
+        "SECRET_KEY environment variable is required. "
+        "Please set it in your .env file or environment variables."
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-
-# tempoarily setting
-ALLOWED_HOSTS = ['*'] 
+# Security: Use environment variable for allowed hosts
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',')]
+else:
+    # Fallback for development
+    ALLOWED_HOSTS = ['*'] 
 
 
 
@@ -108,8 +118,15 @@ WSGI_APPLICATION = 'auth.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# Database configuration - use environment variable (no hardcoded credentials)
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    raise ValueError(
+        "DATABASE_URL environment variable is required. "
+        "Please set it in your .env file or environment variables."
+    )
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://postgres:password@db:5432/virtualscroll')
+    'default': dj_database_url.config(default=database_url)
 }
 FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  
 
