@@ -21,10 +21,6 @@ public class ScrollRespository {
     }
 
     // Save scroll with binary file data
-    // public int saveScroll(Scroll scroll) {
-    //     String sql = "INSERT INTO scrolls (title, file, owner, uploaded_at) VALUES (?, ?, ?, datetime('now'))";
-    //     return jdbcTemplate.update(sql, scroll.getTitle(), scroll.getFile(), scroll.getOwner());
-    // }
     public int saveScroll(Scroll scroll) {
         String sql = "INSERT INTO scrolls (title, file, owner, uploaded_at, file_type) VALUES (?, ?, ?, NOW(), ?)";
         return jdbcTemplate.update(sql, scroll.getTitle(), scroll.getFile(), scroll.getOwner(), scroll.getfileType());

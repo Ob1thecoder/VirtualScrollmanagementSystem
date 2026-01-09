@@ -10,11 +10,13 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
             .allowedOrigins(        
-                "http://django_service:8000"    
-                 
+                "http://django-service:8000",
+                "http://localhost:8000",
+                "http://localhost"
                 )  
-            .allowedMethods("GET", "POST", "DELETE", "PUT")
-            .allowedHeaders("*")
-            .allowCredentials(true);
+            .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS")
+            .allowedHeaders("Content-Type", "Authorization", "X-Requested-With", "X-CSRFToken")
+            .allowCredentials(true)
+            .maxAge(3600);
     }
 }

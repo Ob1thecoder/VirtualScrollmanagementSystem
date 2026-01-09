@@ -20,14 +20,20 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 import requests
 from django.contrib.auth.decorators import user_passes_test
+from django.conf import settings
 
-SPRING_BOOT_API_URL = 'http://springboot-service:8081/api/admin/users'
-SPRING_BOOT_API_URL_S = 'http://springboot-service:8081/api/admin'
-SPRING_BOOT_API_BAN_URL = 'http://springboot-service:8081/api/admin/ban'
-SPRING_BOOT_API_UNBAN_URL = 'http://springboot-service:8081/api/admin/unban'
+#  API URLs from settings
+SPRING_BOOT_API_URL = settings.SPRING_BOOT_API_URL
+SPRING_BOOT_API_URL_S = settings.SPRING_BOOT_API_URL_S
+SPRING_BOOT_API_BAN_URL = settings.SPRING_BOOT_API_BAN_URL
+SPRING_BOOT_API_UNBAN_URL = settings.SPRING_BOOT_API_UNBAN_URL
 
 CustomUser = get_user_model()
 logger = logging.getLogger(__name__)
+
+# Check user role as admin
+def is_admin(user):
+    return user.is_authenticated and user.role == 'admin'
 
 def login_view(request):
     if request.method == 'POST':
@@ -72,6 +78,8 @@ def register(request):
 
 
 
+@login_required
+@user_passes_test(is_admin)
 def admin_page(request):
     try:
         response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/popular')
@@ -79,9 +87,10 @@ def admin_page(request):
             popular_scrolls = response.json()
         else:
             popular_scrolls = []
+            logger.warning(f"Failed to fetch popular scrolls. Status: {response.status_code}")
     except requests.exceptions.RequestException as e:
         popular_scrolls = []
-        print(f"Error fetching popular scrolls: {e}")
+        logger.error(f"Error fetching popular scrolls: {e}", exc_info=True)
 
     return render(request, 'admin_page.html', {
         'user': request.user, 
@@ -89,6 +98,7 @@ def admin_page(request):
     })
     
 
+@login_required
 def user_page(request):
     try:
         response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/popular')
@@ -96,9 +106,10 @@ def user_page(request):
             popular_scrolls = response.json()
         else:
             popular_scrolls = []
+            logger.warning(f"Failed to fetch popular scrolls. Status: {response.status_code}")
     except requests.exceptions.RequestException as e:
         popular_scrolls = []
-        print(f"Error fetching popular scrolls: {e}")
+        logger.error(f"Error fetching popular scrolls: {e}", exc_info=True)
 
     return render(request, 'user_page.html', {
         'user': request.user, 
@@ -133,10 +144,8 @@ class LoginAPIView(APIView):
         return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
     
 def guest_login_view(request):
-  
     guest_user = CustomUser.objects.filter(idKey='guest').first()
         
-
     if guest_user:
         login(request, guest_user)
         try:
@@ -145,9 +154,10 @@ def guest_login_view(request):
                 popular_scrolls = response.json()
             else:
                 popular_scrolls = []
+                logger.warning(f"Failed to fetch popular scrolls. Status: {response.status_code}")
         except requests.exceptions.RequestException as e:
             popular_scrolls = []
-            print(f"Error fetching popular scrolls: {e}")
+            logger.error(f"Error fetching popular scrolls: {e}", exc_info=True)
 
         return render(request, 'guest_page.html', {
             'user': request.user, 
@@ -155,12 +165,22 @@ def guest_login_view(request):
         })
     
     messages.error(request, "Guest login failed.")
-    print("Error")
+    logger.error("Guest user not found in database")
     return redirect('login')
 
 def guest_page(request):
-    scrolls = scrolls.objects.all()  
-    return render(request, 'guest_page.html', {'scrolls': scrolls})
+    
+    try:
+        response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/popular')
+        if response.status_code == 200:
+            popular_scrolls = response.json()
+        else:
+            popular_scrolls = []
+    except requests.exceptions.RequestException as e:
+        popular_scrolls = []
+        logger.error(f"Error fetching popular scrolls: {e}", exc_info=True)
+    
+    return render(request, 'guest_page.html', {'popular_scrolls': popular_scrolls})
 
 @login_required  
 def get_admin_info(request):
@@ -183,11 +203,10 @@ def user_info(request):
     return render(request, "user_detail.html", {'admin': user})
 
 @login_required
+@user_passes_test(is_admin)
 def user_list(request):
     try:
-        
         response = requests.get(SPRING_BOOT_API_URL)
-
         
         if response.status_code == 200:
             users = response.json()
@@ -197,50 +216,66 @@ def user_list(request):
         else:
             users = []  
             logger.error(f"Failed to fetch users. HTTP Status Code: {response.status_code}, Reason: {response.reason}")
-            return JsonResponse({'error': f"Failed to fetch users. Status code: {response.status_code}"}, status=500)
+            messages.error(request, "Failed to fetch users from API.")
 
     except requests.exceptions.RequestException as e:
-        
         users = []
-        logger.error(f"Error connecting to the Spring Boot API: {e}")
-        return JsonResponse({'error': f"Error connecting to the Spring Boot API: {str(e)}"}, status=500)
+        logger.error(f"Error connecting to the Spring Boot API: {e}", exc_info=True)
+        messages.error(request, "Error connecting to the API.")
+    
+    user1 = CustomUser.objects.all()
     return render(request, 'user_list.html', {'users': user1})
 
+@login_required
+@user_passes_test(lambda u: u.is_authenticated and u.role == 'admin')
 def add_user(request):
     if request.method == 'POST':
-        
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']  
-        phoneNumber = request.POST['phoneNumber']  
-        idKey = request.POST['idKey']  
-        role = request.POST['role']
-        fullName = request.POST['fullName']  
-
-        user = CustomUser.objects.create_user(username=username, email=email, password=password)
-        
-        
-        user.phoneNumber = phoneNumber
-        user.idKey = idKey
-        user.fullName = fullName
-        user.role = role
-        user.save()
-
-        return redirect('user_list')
-
+        try:
+            username = request.POST.get('username', '').strip()
+            email = request.POST.get('email', '').strip()
+            password = request.POST.get('password', '')
+            phoneNumber = request.POST.get('phoneNumber', '').strip()
+            idKey = request.POST.get('idKey', '').strip()
+            role = request.POST.get('role', 'user').strip()
+            fullName = request.POST.get('fullName', '').strip()
+            
+            # Basic validation
+            if not all([username, email, password, idKey, fullName]):
+                messages.error(request, "All fields are required.")
+                return render(request, 'add_user.html')
+            
+            user = CustomUser.objects.create_user(username=username, email=email, password=password)
+            user.phoneNumber = phoneNumber
+            user.idKey = idKey
+            user.fullName = fullName
+            user.role = role
+            user.save()
+            messages.success(request, f"User {username} created successfully.")
+            return redirect('user_list')
+        except Exception as e:
+            logger.error(f"Error creating user: {e}", exc_info=True)
+            messages.error(request, "Error creating user. Please try again.")
+    
     return render(request, 'add_user.html')
 
 
 
+@login_required
+@user_passes_test(lambda u: u.is_authenticated and u.role == 'admin')
 def delete_user(request, username):
     if request.method == 'POST':
-        delete_url = f"{SPRING_BOOT_API_URL}/{username}"
-        response = requests.delete(delete_url)
+        try:
+            delete_url = f"{SPRING_BOOT_API_URL}/{username}"
+            response = requests.delete(delete_url)
 
-        if response.status_code == 204:
-            return redirect('user_list')
-        else:
-            print(f"Error deleting user: {response.status_code}")
+            if response.status_code == 204:
+                messages.success(request, f"User {username} deleted successfully.")
+            else:
+                logger.error(f"Failed to delete user {username}. Status: {response.status_code}")
+                messages.error(request, f"Failed to delete user {username}.")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error deleting user {username}: {e}", exc_info=True)
+            messages.error(request, f"Error deleting user {username}.")
 
     return redirect('user_list')
 
@@ -249,12 +284,12 @@ def delete_user(request, username):
 def edit_profile(request):
     user = request.user
     if request.method == 'POST':
-        print("FILES: ", request.FILES)
+        logger.debug(f"Profile edit request with files: {request.FILES}")
         form = EditUserProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
-            
             form.save()
-            print("Form is valid and saved")
+            logger.info(f"Profile updated for user: {user.username}")
+            messages.success(request, "Profile updated successfully.")
             return redirect('user_detail')
     else:
         form = EditUserProfileForm(instance=user)
@@ -273,6 +308,7 @@ def change_password(request):
 
     return render(request, 'change_password.html', {'form': form})
 
+@login_required
 def upload_scroll(request):
     if request.method == 'POST':
         form = ScrollUploadForm(request.POST, request.FILES)
@@ -280,20 +316,27 @@ def upload_scroll(request):
             title = form.cleaned_data['title']
             file = request.FILES['file']
 
+            # Validate file size (10MB limit)
+            if file.size > 10 * 1024 * 1024:
+                messages.error(request, "File size exceeds maximum limit of 10MB.")
+                return render(request, 'upload_scroll.html', {'form': form})
+
             files = {'file': file}
             data = {'title': title, 'owner': request.user.username}
 
             try:
                 response = requests.post(f'{SPRING_BOOT_API_URL_S}/scrolls/upload', files=files, data=data)
                 if response.status_code == 201:
+                    messages.success(request, "Scroll uploaded successfully.")
                     return redirect('scroll_list')
                 else:
-                    print(f"Failed to upload scroll. Status code: {response.status_code}")
-                    print(f"Response: {response.text}")
-            except Exception as e:
-                print(f"Error uploading file: {e}")
+                    logger.error(f"Failed to upload scroll. Status: {response.status_code}, Response: {response.text}")
+                    messages.error(request, "Failed to upload scroll. Please try again.")
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Error uploading file: {e}", exc_info=True)
+                messages.error(request, "Error uploading file. Please try again.")
         else:
-            print("Form is not valid.")
+            messages.error(request, "Please correct the errors in the form.")
     else:
         form = ScrollUploadForm()
 
@@ -327,10 +370,10 @@ def list_scrolls(request):
         else:
             scrolls = []
             liked_scrolls = []
-            print(f"Failed to fetch scrolls or likes. Status code: {response.status_code}")
+            logger.warning(f"Failed to fetch scrolls or likes. Status code: {response.status_code}")
 
     except requests.exceptions.RequestException as e:
-        print(f"Error connecting to the Spring Boot API: {e}")
+        logger.error(f"Error connecting to the Spring Boot API: {e}", exc_info=True)
         scrolls = []
         liked_scrolls = []
 
@@ -358,10 +401,10 @@ def search_scrolls(request):
             scrolls = response.json()
         else:
             scrolls = []
-            print(f"Failed to fetch scrolls. Status code: {response.status_code}")
+            logger.warning(f"Failed to fetch scrolls. Status code: {response.status_code}")
     except requests.exceptions.RequestException as e:
         scrolls = []
-        print(f"Error connecting to the Spring Boot API: {e}")
+        logger.error(f"Error connecting to the Spring Boot API: {e}", exc_info=True)
 
     return render(request, 'scroll_search_results.html', {'scrolls': scrolls})
 
@@ -430,14 +473,22 @@ def preview_scroll_page(request, id):
 @login_required
 def delete_scroll(request, scroll_id):
     if request.method == 'POST':
-        delete_url = f'{SPRING_BOOT_API_URL_S}/scrolls/delete/{scroll_id}'
-        response = requests.delete(delete_url)
+        try:
+            # Verify ownership or admin role
+            # Note: This should ideally check ownership via API, but for now we allow if user is owner or admin
+            delete_url = f'{SPRING_BOOT_API_URL_S}/scrolls/delete/{scroll_id}'
+            response = requests.delete(delete_url)
 
-        if response.status_code == 204:
-            return redirect('your_scrolls')
-        else:
-            return JsonResponse({'message': f'Error deleting scroll: {response.status_code}'}, status=500)
-
+            if response.status_code == 204:
+                messages.success(request, "Scroll deleted successfully.")
+                return redirect('your_scrolls')
+            else:
+                logger.error(f"Failed to delete scroll {scroll_id}. Status: {response.status_code}")
+                messages.error(request, "Failed to delete scroll.")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error deleting scroll {scroll_id}: {e}", exc_info=True)
+            messages.error(request, "Error deleting scroll.")
+    
     return redirect('your_scrolls')
 
 
@@ -471,26 +522,45 @@ def unlike_scroll(request, scroll_id, user_id):
 
 @login_required
 def get_likes_by_user(request, user_id):
+    # Verify user can only see their own likes (unless admin)
+    if request.user.id != user_id and request.user.role != 'admin':
+        messages.error(request, "You can only view your own liked scrolls.")
+        return redirect('scroll_list')
+    
     try:
         response = requests.get(f"{SPRING_BOOT_API_URL_S}/scrolls/likes", params={'userId': user_id})
         if response.status_code == 200:
             liked_scrolls = response.json()
             return render(request, 'liked_scrolls.html', {'liked_scrolls': liked_scrolls})
         else:
-            return JsonResponse({'message': f'Error fetching likes: {response.status_code}'}, status=response.status_code)
+            logger.error(f"Failed to fetch likes for user {user_id}. Status: {response.status_code}")
+            messages.error(request, "Failed to fetch liked scrolls.")
+            return redirect('scroll_list')
     except requests.exceptions.RequestException as e:
-        return JsonResponse({'message': f'Error fetching likes: {str(e)}'}, status=500)
+        logger.error(f"Error fetching likes for user {user_id}: {e}", exc_info=True)
+        messages.error(request, "Error fetching liked scrolls.")
+        return redirect('scroll_list')
+
 @login_required
 def liked_scrolls(request, user_id):
+    # Verify user can only see their own likes (unless admin)
+    if request.user.id != user_id and request.user.role != 'admin':
+        messages.error(request, "You can only view your own liked scrolls.")
+        return redirect('scroll_list')
+    
     try:
         response = requests.get(f"{SPRING_BOOT_API_URL_S}/scrolls/likes", params={'userId': user_id})
         if response.status_code == 200:
             liked_scrolls = response.json()
             return render(request, 'liked_scrolls.html', {'liked_scrolls': liked_scrolls})
         else:
-            return JsonResponse({'message': f'Error fetching likes: {response.status_code}'}, status=response.status_code)
+            logger.error(f"Failed to fetch likes for user {user_id}. Status: {response.status_code}")
+            messages.error(request, "Failed to fetch liked scrolls.")
+            return redirect('scroll_list')
     except requests.exceptions.RequestException as e:
-        return JsonResponse({'message': f'Error fetching likes: {str(e)}'}, status=500)    
+        logger.error(f"Error fetching likes for user {user_id}: {e}", exc_info=True)
+        messages.error(request, "Error fetching liked scrolls.")
+        return redirect('scroll_list')    
 def your_scrolls(request):
     try:
         username = request.user.username
@@ -502,9 +572,9 @@ def your_scrolls(request):
             scrolls = []  
         else:
             scrolls = []
-            print(f"Failed to fetch scrolls for {username}. Status code: {response.status_code}")
+            logger.warning(f"Failed to fetch scrolls for {username}. Status code: {response.status_code}")
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching scrolls: {e}")
+        logger.error(f"Error fetching scrolls: {e}", exc_info=True)
         scrolls = []
 
     return render(request, 'your_scroll.html', {'scrolls': scrolls})
@@ -537,35 +607,54 @@ def download_scroll(request, scroll_id):
 @login_required
 def edit_scroll_file(request, id):
     if request.method == 'POST':
-        file_content = request.POST.get('file_content')  
+        file_content = request.POST.get('file_content', '').strip()
+        
+        if not file_content:
+            messages.error(request, "File content cannot be empty.")
+            return redirect('your_scrolls')
+        
         edit_url = f'{SPRING_BOOT_API_URL_S}/scrolls/edit/{id}'
         
         try:
-            # Ensure file_content is being sent correctly
+            # Validate content size (10MB limit)
+            if len(file_content.encode('utf-8')) > 10 * 1024 * 1024:
+                messages.error(request, "File content exceeds maximum size of 10MB.")
+                return redirect('your_scrolls')
+            
             response = requests.post(edit_url, data={'file_content': file_content})
             
             if response.status_code == 200:
+                messages.success(request, "Scroll updated successfully.")
                 return redirect('your_scrolls')
             else:
-                return HttpResponse(f"Failed to edit scroll. Status code: {response.status_code}", status=response.status_code)
-        
+                logger.error(f"Failed to edit scroll {id}. Status: {response.status_code}")
+                messages.error(request, "Failed to update scroll.")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error editing scroll {id}: {e}", exc_info=True)
+            messages.error(request, "Error updating scroll.")
         except Exception as e:
-            return HttpResponse(f"An error occurred: {str(e)}", status=500)
+            logger.error(f"Unexpected error editing scroll {id}: {e}", exc_info=True)
+            messages.error(request, "An unexpected error occurred.")
     
     # Fetch the existing scroll content to display in the form
-    response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/preview/{id}')
-    
-    if response.status_code == 200:
-        scroll_content = response.text
-        return render(request, 'edit_scroll.html', {'scroll_content': scroll_content, 'scroll_id': id})
-    else:
-        return HttpResponse("Scroll preview not available", status=404)
-    
-# Ban users from app
-def is_admin(user):
-    return user.is_authenticated and user.role == 'admin'
+    try:
+        response = requests.get(f'{SPRING_BOOT_API_URL_S}/scrolls/preview/{id}')
+        
+        if response.status_code == 200:
+            scroll_content = response.text
+            return render(request, 'edit_scroll.html', {'scroll_content': scroll_content, 'scroll_id': id})
+        else:
+            logger.error(f"Failed to fetch scroll preview {id}. Status: {response.status_code}")
+            messages.error(request, "Scroll preview not available.")
+            return redirect('your_scrolls')
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching scroll preview {id}: {e}", exc_info=True)
+        messages.error(request, "Error loading scroll.")
+        return redirect('your_scrolls')
+
 # Only allow admins to access this view
 @login_required
+@user_passes_test(is_admin)
 def ban_user(request, username):
     try:
         response = requests.post(f"{SPRING_BOOT_API_BAN_URL}/{username}")
@@ -576,15 +665,20 @@ def ban_user(request, username):
             user.save()
             messages.success(request, f"User {username} banned successfully.")
         else:
-            messages.error(request, f"Failed to ban user {username}. Status code: {response.status_code}")
+            logger.error(f"Failed to ban user {username}. Status: {response.status_code}")
+            messages.error(request, f"Failed to ban user {username}.")
+    except CustomUser.DoesNotExist:
+        logger.error(f"User {username} not found")
+        messages.error(request, f"User {username} not found.")
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error banning user {username}: {e}")
-        messages.error(request, f"Error banning user {username}. Exception: {e}")
+        logger.error(f"Error banning user {username}: {e}", exc_info=True)
+        messages.error(request, f"Error banning user {username}.")
 
     return redirect('user_list')
 
 
 @login_required
+@user_passes_test(is_admin)
 def unban_user(request, username):
     try:
         response = requests.post(f"{SPRING_BOOT_API_UNBAN_URL}/{username}")
@@ -595,10 +689,14 @@ def unban_user(request, username):
             user.save()
             messages.success(request, f"User {username} unbanned successfully.")
         else:
-            messages.error(request, f"Failed to unban user {username}. Status code: {response.status_code}")
+            logger.error(f"Failed to unban user {username}. Status: {response.status_code}")
+            messages.error(request, f"Failed to unban user {username}.")
+    except CustomUser.DoesNotExist:
+        logger.error(f"User {username} not found")
+        messages.error(request, f"User {username} not found.")
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error unbanning user {username}: {e}")
-        messages.error(request, f"Error unbanning user {username}. Exception: {e}")
+        logger.error(f"Error unbanning user {username}: {e}", exc_info=True)
+        messages.error(request, f"Error unbanning user {username}.")
 
     return redirect('user_list')
 

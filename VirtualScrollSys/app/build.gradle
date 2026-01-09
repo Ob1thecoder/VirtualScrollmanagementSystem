@@ -25,6 +25,9 @@ dependencies {
     // Spring Boot Web for REST API
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Spring Boot Security for authentication and authorization
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // Spring Boot JDBC for database access
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -42,6 +45,9 @@ dependencies {
 
     //Apache tika for file detection
     implementation 'org.apache.tika:tika-core:2.9.0'
+    
+    // BCrypt for password hashing
+    implementation 'org.springframework.security:spring-security-crypto:6.1.0'
 
 
     // Testing dependencies

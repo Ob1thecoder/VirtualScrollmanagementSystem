@@ -34,13 +34,6 @@ public class ScrollController {
         this.scrollService = scrollService;
     }
 
-    // GET endpoint to list all scrolls
-    // @GetMapping("/list")
-    // public ResponseEntity<List<Scroll>> listAllScrolls() {
-    //     List<Scroll> scrolls = scrollService.getAllScrolls();
-    //     return new ResponseEntity<>(scrolls, HttpStatus.OK);
-    // }
-
     @GetMapping("/list")
     public ResponseEntity<List<Scroll>> listOrSearchScrolls(
             @RequestParam(required = false) String owner,
@@ -76,9 +69,22 @@ public class ScrollController {
             }
 
             // Extract file type and validate
-            String fileType = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-            if (!(fileType.equals("txt") || fileType.equals("pdf") || fileType.equals("jpg") || fileType.equals("png"))) {
-                return new ResponseEntity<>("Unsupported file type. Allowed types: .txt, .pdf, .jpg, .png.",
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || !originalFilename.contains(".")) {
+                return new ResponseEntity<>("Invalid filename. File must have an extension.",
+                        HttpStatus.BAD_REQUEST);
+            }
+            
+            String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+            if (!(fileType.equals("txt") || fileType.equals("pdf") || fileType.equals("jpg") || fileType.equals("png") || fileType.equals("jpeg"))) {
+                return new ResponseEntity<>("Unsupported file type. Allowed types: .txt, .pdf, .jpg, .jpeg, .png.",
+                        HttpStatus.BAD_REQUEST);
+            }
+            
+            // Validate file size (10MB limit)
+            long maxFileSize = 10 * 1024 * 1024; // 10MB
+            if (file.getSize() > maxFileSize) {
+                return new ResponseEntity<>("File size exceeds maximum limit of 10MB.",
                         HttpStatus.BAD_REQUEST);
             }
 
@@ -147,16 +153,19 @@ public ResponseEntity<Map<String, Object>> previewScroll(@PathVariable Long id) 
     public ResponseEntity<String> editScroll(
             @PathVariable Long id,  
             @RequestParam("file_content") String fileContent) {
+        try {
+            Scroll scroll = scrollService.getScrollById(id); 
+            if (scroll == null) {
+                return new ResponseEntity<>("Scroll not found", HttpStatus.NOT_FOUND);
+            }
 
-        Scroll scroll = scrollService.getScrollById(id); 
-        if (scroll == null) {
-            return new ResponseEntity<>("Scroll not found", HttpStatus.NOT_FOUND);
+            scrollService.updateScrollContent(id, fileContent);
+            return new ResponseEntity<>("Scroll updated successfully", HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error updating scroll: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        scrollService.updateScrollContent(id, fileContent);
-        return new ResponseEntity<>("Scroll updated successfully", HttpStatus.OK);
-
-        
     }
 
     

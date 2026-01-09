@@ -50,12 +50,6 @@ public class ScrollService {
         return scrollRepository.populaScrolls();
     }
 
-    
-
-    // // Upload a scroll
-    // public void uploadScroll(String title, MultipartFile file, String owner) throws IOException {
-    //     scrollRepository.saveScroll(title, file, owner);
-    // }
     // Add a new scroll
     public int addScroll(Scroll scroll) {
         return scrollRepository.saveScroll(scroll);
@@ -66,6 +60,16 @@ public class ScrollService {
     }
     // Update Scroll
     public void updateScrollContent(Long id, String newContent) {
+        if (newContent == null) {
+            throw new IllegalArgumentException("Content cannot be null");
+        }
+        
+        // Validate content size (10MB limit)
+        int maxContentSize = 10 * 1024 * 1024; // 10MB
+        if (newContent.length() > maxContentSize) {
+            throw new IllegalArgumentException("Content size exceeds maximum limit of 10MB");
+        }
+        
         Scroll scroll = scrollRepository.findScrollById(id);
         if (scroll != null) {
             scroll.setFile(newContent.getBytes());  

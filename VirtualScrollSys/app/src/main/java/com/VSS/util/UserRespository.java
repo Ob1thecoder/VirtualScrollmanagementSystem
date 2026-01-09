@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import com.VSS.model.User;
@@ -12,9 +13,11 @@ import com.VSS.model.User;
 public class UserRespository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public UserRespository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     // SQL query to retrieve all users
@@ -25,9 +28,13 @@ public class UserRespository {
 
     // SQL query to add a new user
     public int saveUser(User user) {
+        // Generate and hash password securely
+        String plainPassword = user.generateRandomPassword(10);
+        String hashedPassword = passwordEncoder.encode(plainPassword);
+        
         String sql = "INSERT INTO authapp_customuser (fullname, username, role, email, phoneNumber, IDkey, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, user.getFullname(), user.getUsername(), user.getRole(), user.getEmail(),
-                user.getPhone(), user.getIDkey(), user.generateRandomPassword(10));
+                user.getPhone(), user.getIDkey(), hashedPassword);
     }
 
     // SQL query to delete user by username

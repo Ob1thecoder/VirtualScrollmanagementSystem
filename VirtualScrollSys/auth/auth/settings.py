@@ -32,7 +32,7 @@ if not SECRET_KEY:
     )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # Security: Use environment variable for allowed hosts
 allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
@@ -112,12 +112,6 @@ WSGI_APPLICATION = 'auth.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 # Database configuration - use environment variable (no hardcoded credentials)
 database_url = os.environ.get('DATABASE_URL')
 if not database_url:
@@ -133,6 +127,29 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  
 
+# Session Security
+SESSION_COOKIE_HTTPONLY = True  # Always protect from JavaScript access
+SESSION_COOKIE_SAMESITE = 'Lax'  # Always protect from CSRF
+SESSION_COOKIE_AGE = 3600  # 1 hour timeout (adjust as needed)
+
+# Only enforce HTTPS in production (when DEBUG=False)
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True  
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    
+    # HTTPS Enforcement
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+else:
+    # Development mode - allow HTTP
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -186,3 +203,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Spring Boot API Configuration
+# These can be set in .env file or environment variables
+SPRING_BOOT_API_URL = os.environ.get(
+    'SPRING_BOOT_API_URL', 
+    'http://springboot-service:8081/api/admin/users'
+)
+SPRING_BOOT_API_URL_S = os.environ.get(
+    'SPRING_BOOT_API_URL_S',
+    'http://springboot-service:8081/api/admin'
+)
+SPRING_BOOT_API_BAN_URL = os.environ.get(
+    'SPRING_BOOT_API_BAN_URL',
+    'http://springboot-service:8081/api/admin/ban'
+)
+SPRING_BOOT_API_UNBAN_URL = os.environ.get(
+    'SPRING_BOOT_API_UNBAN_URL',
+    'http://springboot-service:8081/api/admin/unban'
+)
